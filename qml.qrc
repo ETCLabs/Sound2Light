@@ -1,0 +1,38 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/AboutDialog.qml</file>
+        <file>qml/BandpassPreviewInSpectrum.qml</file>
+        <file>qml/main.qml</file>
+        <file>qml/NoInputDeviceDialog.qml</file>
+        <file>qml/OscMessageDialog.qml</file>
+        <file>qml/OscMessagesCobaltArea.qml</file>
+        <file>qml/OscMessagesEosArea.qml</file>
+        <file>qml/SettingsDialog.qml</file>
+        <file>qml/SpectrumPlot.qml</file>
+        <file>qml/SpectrumWithControls.qml</file>
+        <file>qml/TouchArea.qml</file>
+        <file>qml/TriggerSettings.qml</file>
+        <file>qml/TriggerSettingsArea.qml</file>
+        <file>qml/TriggerSettingsLegend.qml</file>
+        <file>qml/style/DarkBlueStripedBackground.qml</file>
+        <file>qml/style/DarkButton.qml</file>
+        <file>qml/style/DarkCheckBox.qml</file>
+        <file>qml/style/DarkComboBox.qml</file>
+        <file>qml/style/DarkRadioButton.qml</file>
+        <file>qml/style/DarkSpinBox.qml</file>
+        <file>qml/style/DarkSplitView.qml</file>
+        <file>qml/style/DarkTabView.qml</file>
+        <file>qml/style/DarkTextField.qml</file>
+        <file>qml/style/GreyText.qml</file>
+        <file>qml/style/SliderWithIndicator.qml</file>
+        <file>qml/style/CenterLabel.qml</file>
+        <file>qml/PresetsDialog.qml</file>
+        <file>qml/PresetListDialog.qml</file>
+        <file>qml/oscUtils.js</file>
+        <file>qml/NumericInput.qml</file>
+        <file>qml/style/NumBlockButton.qml</file>
+        <file>qml/OscLogDialog.qml</file>
+        <file>qml/OscMessagesCobaltOldArea.qml</file>
+        <file>qml/OscMessagesColorSourceArea.qml</file>
+    </qresource>
+</RCC>

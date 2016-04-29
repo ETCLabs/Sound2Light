@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/backgroundBlue.png</file>
+        <file>images/backgroundGray.png</file>
+        <file>images/trash_icon.png</file>
+        <file>images/icons/etcicon.icns</file>
+        <file>images/icons/etclogo.png</file>
+        <file>images/icons/etcicon.ico</file>
+    </qresource>
+</RCC>
