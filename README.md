@@ -11,6 +11,7 @@ We also welcome pull requests for bug fixes and feature additions.
 # Download
 
 The current release for Windows and Mac is available here: [Download](https://github.com/ElectronicTheatreControlsLabs/Sound2Light/releases)
+The manual can be found here: [Manual](https://github.com/ElectronicTheatreControlsLabs/Sound2Light/blob/master/doc/Sound2Light_Tool_Manual_en.pdf)
 
 # Screenshot
 
