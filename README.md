@@ -7,3 +7,11 @@ The Sound2Light Tool is open-source software designed to interact with Electroni
 ETC Support is not familiar with this software and will not be able to assist if issues arise.
 
 We also welcome pull requests for bug fixes and feature additions.
+
+# Download
+
+The current release for Windows and Mac is available here: [Download](https://github.com/ElectronicTheatreControlsLabs/Sound2Light/releases)
+
+# Screenshot
+
+![screenshot](https://github.com/ElectronicTheatreControlsLabs/Sound2Light/blob/master/doc/screenshot_main_window.png)
