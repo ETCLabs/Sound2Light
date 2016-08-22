@@ -83,7 +83,7 @@ public:
 	qreal getCurrentLevel() const { return m_lastValue; }
 
 	// checks if the max level within the frequency band is greater than the threshold
-	void checkForTrigger(ScaledSpectrum& spectrum) override;
+    bool checkForTrigger(ScaledSpectrum& spectrum, bool forceRelease) override;
 
 	// ---------------- Save and Restore ---------------
 
@@ -98,8 +98,7 @@ public:
 
 protected:
 	const QString	m_name;  // name of the Trigger (used for save, restore and UI)
-	OSCNetworkManager*	m_osc;  // pointer to OSCNetworkManager instance (i.e. of MainController)
-	const bool		m_isBandpass;  // true if this is a bandpass (with frequency and width parameter)
+    OSCNetworkManager*	m_osc;  // pointer to OSCNetworkManager instance (i.e. of MainController)
 	const bool		m_invert;  // true if signal values should be inverted (i.e. for "silence" trigger)
 	int				m_midFreq;  // middle frequency of bandpass in Hz
 	const int		m_defaultMidFreq;  // default midFreq in Hz, used for reset

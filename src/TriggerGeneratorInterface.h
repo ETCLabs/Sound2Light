@@ -36,11 +36,13 @@ class TriggerGeneratorInterface
 {
 
 public:
-	explicit TriggerGeneratorInterface() {}
+    explicit TriggerGeneratorInterface(bool isBandpass)
+        : m_isBandpass(isBandpass) {}
 	virtual ~TriggerGeneratorInterface() {}
 
 	// checks if a signal should be triggered by analyzing the given spectrum
-	virtual void checkForTrigger(ScaledSpectrum& spectrum) = 0;
+    // forceRelease is true when low solo mode is active and a lower trigger was activated
+    virtual bool checkForTrigger(ScaledSpectrum& spectrum, bool forceRelease) = 0;
 
 	// returns a reference to the internal TriggerFilter
 	virtual TriggerFilter& getTriggerFilter() = 0;
@@ -50,6 +52,12 @@ public:
 
 	// restores parameters from QSettings
 	virtual void restore(QSettings& settings) = 0;
+
+    // returns if this is a Bandpass trigger generator
+    bool isBandpass() const { return m_isBandpass; }
+
+protected:
+    const bool m_isBandpass;  // true if this is a bandpass (with frequency and width parameter)
 };
 
 

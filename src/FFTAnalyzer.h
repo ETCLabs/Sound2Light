@@ -60,7 +60,7 @@ public:
 
 	// calculates the FFT based on the data in the inputBuffer and updates the ScaledSpectrum
 	// - usually called periodically 44 times per second
-	void calculateFFT();
+    void calculateFFT(bool lowSoloMode);
 
 	// returns the normalized spectrum of the ScaledSpectrum
 	const QVector<float>& getNormalizedSpectrum() const { return m_scaledSpectrum.getNormalizedSpectrum(); }

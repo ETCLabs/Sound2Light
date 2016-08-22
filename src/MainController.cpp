@@ -45,6 +45,7 @@ MainController::MainController(QQmlApplicationEngine* qmlEngine, QObject *parent
 	, m_osc()
 	, m_consoleType("EOS")
 	, m_oscMapping(this)
+    , m_lowSoloMode(false)
 {
 	m_audioInput = new QAudioInputWrapper(&m_buffer);
 
@@ -116,6 +117,7 @@ void MainController::initializeGenerators()
 
 	// append triggerGenerators to triggerContainer:
 	// (container is used to access all generators at once)
+    // order is important because of lowSoloMode
 	m_triggerContainer.append(m_bass);
 	m_triggerContainer.append(m_loMid);
 	m_triggerContainer.append(m_hiMid);
@@ -363,6 +365,7 @@ void MainController::loadPreset(const QString &constFileName, bool createIfNotEx
 	setFftCompression(settings.value("fftCompression").toReal());
 	setAgcEnabled(settings.value("agcEnabled").toBool());
 	setConsoleType(settings.value("consoleType").toString());
+    setLowSoloMode(settings.value("lowSoloMode").toBool());
 
 	// restore the settings in all TriggerGenerators:
 	for (int i=0; i<m_triggerContainer.size(); ++i) {
@@ -423,6 +426,7 @@ void MainController::savePresetAs(const QString &constFileName, bool isAutosave)
 	settings.setValue("fftCompression", getFftCompression());
 	settings.setValue("agcEnabled", getAgcEnabled());
 	settings.setValue("consoleType", getConsoleType());
+    settings.setValue("lowSoloMode", getLowSoloMode());
 
 	// save the settings in all TriggerGenerators:
 	for (int i=0; i<m_triggerContainer.size(); ++i) {

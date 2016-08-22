@@ -26,10 +26,9 @@
 #include <QtMath>
 
 TriggerGenerator::TriggerGenerator(QString name, OSCNetworkManager* osc, bool isBandpass, bool invert, int midFreq)
-	: TriggerGeneratorInterface()
+    : TriggerGeneratorInterface(isBandpass)
 	, m_name(name)
-	, m_osc(osc)
-	, m_isBandpass(isBandpass)
+    , m_osc(osc)
 	, m_invert(invert)
 	, m_midFreq(midFreq)
 	, m_defaultMidFreq(midFreq)
@@ -42,7 +41,7 @@ TriggerGenerator::TriggerGenerator(QString name, OSCNetworkManager* osc, bool is
 	resetParameters();
 }
 
-void TriggerGenerator::checkForTrigger(ScaledSpectrum &spectrum)
+bool TriggerGenerator::checkForTrigger(ScaledSpectrum &spectrum, bool forceRelease)
 {
 	qreal value;
 	if (m_isBandpass) {
@@ -53,11 +52,11 @@ void TriggerGenerator::checkForTrigger(ScaledSpectrum &spectrum)
 	if (m_invert) value = 1 - value;
 
 	// check for trigger:
-	if (!m_isActive && value >= m_threshold) {
+    if ((!m_isActive && value >= m_threshold) && !forceRelease) {
 		// activate trigger:
 		m_isActive = true;
 		m_filter.triggerOn();
-	} else if (m_isActive && value < m_threshold) {
+    } else if ((m_isActive && value < m_threshold) || forceRelease) {
 		// release trigger:
 		m_isActive = false;
 		m_filter.triggerOff();
@@ -76,6 +75,7 @@ void TriggerGenerator::checkForTrigger(ScaledSpectrum &spectrum)
 	}
 
 	m_lastValue = value;
+    return m_isActive;
 }
 
 void TriggerGenerator::save(QSettings& settings) const

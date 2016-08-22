@@ -50,7 +50,7 @@ void FFTAnalyzer::calculateWindow()
 	}
 }
 
-void FFTAnalyzer::calculateFFT()
+void FFTAnalyzer::calculateFFT(bool lowSoloMode)
 {
 	// apply window:
 	for (int i=0; i < NUM_SAMPLES; ++i) {
@@ -73,8 +73,15 @@ void FFTAnalyzer::calculateFFT()
 	// give linear spectrum to ScaledSpectrum object to be scalled:
 	m_scaledSpectrum.updateWithLinearSpectrum(m_linearSpectrum);
 
-	// next element in processing chain: TriggerGenerators
-	for (int i=0; i<m_triggerContainer.size(); ++i) {
-		m_triggerContainer[i]->checkForTrigger(m_scaledSpectrum);
-	}
+    // next element in processing chain: TriggerGenerators
+    bool triggered = false;
+    for (int i=0; i<m_triggerContainer.size(); ++i) {
+        TriggerGeneratorInterface* trigger = m_triggerContainer[i];
+        if (trigger->isBandpass()) {
+            bool active = trigger->checkForTrigger(m_scaledSpectrum, lowSoloMode && triggered);
+            triggered = triggered || active;
+        } else {
+            trigger->checkForTrigger(m_scaledSpectrum, false);
+        }
+    }
 }

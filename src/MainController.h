@@ -72,6 +72,8 @@ class MainController : public QObject
 	Q_PROPERTY(QString presetName READ getPresetName NOTIFY presetNameChanged)
 	// this property indicates if the current preset has been changed but not stored yet:
 	Q_PROPERTY(bool presetChangedButNotSaved READ getPresetChangedButNotSaved NOTIFY presetChangedButNotSavedChanged)
+    // this property is used for the lowSoloMode checkbox:
+    Q_PROPERTY(bool lowSoloMode READ getLowSoloMode WRITE setLowSoloMode NOTIFY lowSoloModeChanged)
 
 public:
 	explicit MainController(QQmlApplicationEngine* m_qmlEngine, QObject *parent = 0);
@@ -110,7 +112,10 @@ signals:
 	void compressionChanged();
 
 	// emitted when a value of the preset changed
-	void presetChanged();
+    void presetChanged();
+
+    // emitted when lowSoloMode changed
+    void lowSoloModeChanged();
 
 	// forwarded from OSCNetworkManager:
 	void messageReceived(OSCMessage msg);
@@ -139,7 +144,7 @@ public slots:
 	// restores the window size and position
 	void restoreWindowGeometry();
 
-	void updateFFT() { m_fft.calculateFFT(); }
+    void updateFFT() { m_fft.calculateFFT(m_lowSoloMode); }
 
 	// ------------------- Presets --------------------------------
 
@@ -185,6 +190,11 @@ public slots:
 	QString getConsoleType() const { return m_consoleType; }
 	// sets the used console type (either "EOS" or "Cobalt")
 	void setConsoleType(QString value);
+
+    // returns if low solo mode is active
+    bool getLowSoloMode() const { return m_lowSoloMode; }
+    // enables or disables low solo mode
+    void setLowSoloMode(bool value) { m_lowSoloMode = value; emit lowSoloModeChanged(); }
 
 	// returns the current spectrum outline as a list of qreal values in the range 0...1
 	// used in GUI to display SpectrumPlot
@@ -307,6 +317,7 @@ protected:
 	QMap<QString, QObject*>		m_dialogs;  // list of all open dialogs (QML-filename -> GUI element instance)
 	OSCMapping					m_oscMapping;  // OSCMapping instance
 	QTimer						m_oscUpdateTimer;  // Timer used to trigger OSC level feedback
+    bool                        m_lowSoloMode;  // true if low solo mode is active
 
 	TriggerGenerator* m_bass;  // pointer to Bass TriggerGenerator instance
 	TriggerGenerator* m_loMid;  // pointer to LoMid TriggerGenerator instance

@@ -165,7 +165,7 @@ Row {
 		// ------------------------- Gain and Compressor Sliders ---------------------
 		Row {
 			width: parent.width
-			height: parent.height - 30*2
+            height: parent.height - 30*3
 			// -------------------------- Gain
 			Column {
 				width: 80
@@ -232,7 +232,7 @@ Row {
 			}
 		}  // Row Gain and Compressor Sliders end
 
-		// ----------------------------- dB Checkbox and AGC Checkbox -----------------------
+        // ----------------------------- dB + AGC + LowSolo Checkbox -----------------------
 		DarkCheckBox {
 			id: agcCheckbox
 			width: parent.width - 20
@@ -261,5 +261,19 @@ Row {
 				onDecibelConversionChanged: dbCheckbox.checked = controller.decibelConversion
 			}
 		}
+        DarkCheckBox {
+            id: lowSoloCheckbox
+            width: parent.width - 20
+            height: 30
+            x: 20
+            checked: controller.lowSoloMode
+            onCheckedChanged: if (checked !== controller.lowSoloMode) controller.setLowSoloMode(checked)
+            text: "Low Solo Mode"
+
+            Connections {
+                target: controller
+                onLowSoloModeChanged: lowSoloCheckbox.checked = controller.lowSoloMode
+            }
+        }
 	}  // Right area column end
 }
