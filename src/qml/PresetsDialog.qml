@@ -109,9 +109,7 @@ Dialog {
 					} else {
 						//controller.openDialog("qrc:/qml/LoadPresetDialog.qml")
 						controller.openLoadPresetDialog()
-					}
-					root.close()
-					controller.dialogIsClosed(root)
+                    }
 				}
 
 				MessageDialog {
@@ -126,16 +124,22 @@ Dialog {
 						//controller.openDialog("qrc:/qml/LoadPresetDialog.qml")
 						controller.openLoadPresetDialog()
 						unsavedChangesDialog.close()
+                        root.close()
+                        controller.dialogIsClosed(root)
 					}
 					onDiscard: {
 						// Discard Button:
 						//controller.openDialog("qrc:/qml/LoadPresetDialog.qml")
 						controller.openLoadPresetDialog()
 						unsavedChangesDialog.close()
+                        root.close()
+                        controller.dialogIsClosed(root)
 					}
 					onRejected: {
 						// Cancel Button:
 						unsavedChangesDialog.close()
+                        root.close()
+                        controller.dialogIsClosed(root)
 					}
 				}
 
@@ -146,9 +150,7 @@ Dialog {
 				height: 35
 				text: "Reset"
 				onClicked: {
-					resetDialog.open()
-					root.close()
-					controller.dialogIsClosed(root)
+                    resetDialog.open()
 				}
 
 
@@ -161,9 +163,13 @@ Dialog {
 					onYes: {
 						controller.resetPreset()
 						resetDialog.close()
+                        root.close()
+                        controller.dialogIsClosed(root)
 					}
 					onRejected: {
 						resetDialog.close()
+                        root.close()
+                        controller.dialogIsClosed(root)
 					}
 				}
 

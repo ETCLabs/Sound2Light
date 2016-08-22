@@ -487,6 +487,7 @@ void MainController::resetPreset()
 	setFftCompression(1.0);
 	setAgcEnabled(true);
 	setDecibelConversion(false);
+    setLowSoloMode(false);
 
 	// reset values in all TriggerGuiControllers:
 	m_bassController->resetParameters();
