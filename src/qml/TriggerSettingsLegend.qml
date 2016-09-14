@@ -42,6 +42,13 @@ Column {
 		text: "Presets"
 		onClicked: controller.openDialog("qrc:/qml/PresetsDialog.qml")
 	}
+    // ------------------------ OSC Monitor Button -----------------------------
+    DarkButton {
+        width: parent.width
+        height: 30
+        text: "OSC Monitor"
+        onClicked: controller.openDialog("qrc:/qml/OscLogDialog.qml")
+    }
 	// ------------------------- Send OSC Checkbox ---------------------
 	DarkCheckBox {
 		id: sendOscCheckbox
@@ -68,10 +75,11 @@ Column {
 			target: controller
 			onSettingsChanged: oscInputCheckbox.checked = controller.getOscInputEnabled()
 		}
-	}
+    }
+
 	Item {  // spacer
 		width: parent.width
-		height: parent.height - details.height - 30*3 - 30*2
+        height: parent.height - details.height - 30*6
 	}
 
 	// ----------------------- Show / Hide Details Button -----------------

@@ -32,7 +32,7 @@ Grid {
 		id: leftLegend
 		width: 20
 		height: parent.height - bottomLegend.height
-		color: "#333333"
+        color: "#272727"
 		GreyText {
 			text: "dB"
 			x: 2
@@ -95,20 +95,7 @@ Grid {
 			// Spectrum will be updated with 50Hz:
 			interval: 20; running: true; repeat: true
 			onTriggered: canvas.requestPaint()
-		}
-		Rectangle {
-			// left border
-			width: 1
-			height: parent.height
-			color: "#1C2C40"
-		}
-		Rectangle {
-			// bottom border
-			width: parent.width
-			height: 1
-			y: parent.height - 1
-			color: "#1C2C40"
-		}
+        }
 
 		// clip to prevent BandpassPreviews be drawn outside Spectrum:
 		clip: true
@@ -153,7 +140,7 @@ Grid {
 	Rectangle {
 		id: bottomLegend
 		width: parent.width - leftLegend.width
-		height: 20
+        height: 14
 		color: "#333333"
 		GreyText {
 			text: "100"

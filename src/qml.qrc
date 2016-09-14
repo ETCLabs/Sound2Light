@@ -34,5 +34,12 @@
         <file>qml/OscLogDialog.qml</file>
         <file>qml/OscMessagesCobaltOldArea.qml</file>
         <file>qml/OscMessagesColorSourceArea.qml</file>
+        <file>qml/BPMSettings.qml</file>
+        <file>qml/WavePlot.qml</file>
+        <file>qml/BPMOscMessageDialog.qml</file>
+        <file>qml/BPMOscMessagesEosArea.qml</file>
+        <file>qml/BPMOscMessagesOtherArea.qml</file>
+        <file>qml/BPMOscMessagesCobaltArea.qml</file>
+        <file>qml/BPMOscMessagesCobaltOldArea.qml</file>
     </qresource>
 </RCC>

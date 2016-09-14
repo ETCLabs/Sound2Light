@@ -25,6 +25,7 @@
 MonoAudioBuffer::MonoAudioBuffer(int capacity)
 	: m_capacity(capacity)
 	, m_buffer(capacity)
+    , m_numPutSamples(0)
 {
 	for (int i=0; i < m_buffer.capacity(); ++i) {
 		m_buffer.push_back(0.0);
@@ -38,7 +39,9 @@ void MonoAudioBuffer::putSamples(QVector<qreal>& data, const int& channelCount)
 
 	for (int i=0; i<data.size(); ++i) {
 		m_buffer.push_back(data[i]);
-	}
+    }
+
+    m_numPutSamples += data.size();
 }
 
 void MonoAudioBuffer::convertToMonoInplace(QVector<qreal>& data, const int& channelCount) const {

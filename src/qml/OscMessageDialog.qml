@@ -61,7 +61,7 @@ Dialog {
 				// sets the right conent for this loader based on the chosen console type
 				// - called when Component is complete and when "visible" of dialog changes
 				function updateConsoleType() {
-					var consoleType = controller.getConsoleType();
+                    var consoleType = controller.getConsoleType();
 					var sourceUrl = ""
 					if (consoleType === "Eos" || consoleType === "EOS") {
 						sourceUrl = "qrc:/qml/OscMessagesEosArea.qml"

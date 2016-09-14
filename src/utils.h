@@ -22,6 +22,7 @@
 #define UTILS_H
 
 #include <QtMath>
+#include <chrono>
 
 // This file includes some often used utility functions.
 
@@ -31,6 +32,36 @@ template<typename T1, typename T2, typename T3>
 T2 limit(T1 min, T2 value, T3 max) {
 	return qMax(T2(min), qMin(value, T2(max)));
 }
+
+
+namespace HighResTime {  // -------------------
+
+typedef std::chrono::time_point<std::chrono::system_clock> time_point_t;
+
+inline time_point_t now() {
+    return std::chrono::system_clock::now();
+}
+
+inline double elapsedSecSince(time_point_t start) {
+    time_point_t now = HighResTime::now();
+    std::chrono::duration<double> elapsed_seconds_duration = now - start;
+    double elapsedSeconds = elapsed_seconds_duration.count();
+    return elapsedSeconds;
+}
+
+inline double diff(time_point_t end, time_point_t start) {
+    std::chrono::duration<double> elapsed_seconds_duration = end - start;
+    return elapsed_seconds_duration.count();
+}
+
+inline double getElapsedSecAndUpdate(time_point_t& lastTime) {
+    time_point_t now = HighResTime::now();
+    double elapsedSeconds = diff(now, lastTime);
+    lastTime = now;
+    return elapsedSeconds;
+}
+
+}  // end namespace HighResTime -----------------
 
 
 #endif // UTILS_H

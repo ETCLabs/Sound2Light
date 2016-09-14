@@ -58,7 +58,7 @@ Item {
 	Rectangle {
 		id: marker
 		property bool active: false
-		color: bandpassController.active ? "lightgreen" : "#B5B7BA"
+        color: bandpassController.active ? "#FFFFFF" : "#95979A"
 		height: 2
 		width: area.width
 		y: area.y

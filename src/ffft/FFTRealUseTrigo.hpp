@@ -23,8 +23,6 @@ http://sam.zoy.org/wtfpl/COPYING for more details.
 #if ! defined (ffft_FFTRealUseTrigo_CODEHEADER_INCLUDED)
 #define	ffft_FFTRealUseTrigo_CODEHEADER_INCLUDED
 
-
-
 /*\\\ INCLUDE FILES \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
 #include	"ffft/OscSinCos.h"
@@ -49,7 +47,8 @@ void	FFTRealUseTrigo <ALGO>::prepare (OscType &osc)
 template <>
 inline void	FFTRealUseTrigo <0>::prepare (OscType &osc)
 {
-	// Nothing
+    Q_UNUSED(osc);
+    // Nothing
 }
 
 
@@ -57,6 +56,9 @@ inline void	FFTRealUseTrigo <0>::prepare (OscType &osc)
 template <int ALGO>
 void	FFTRealUseTrigo <ALGO>::iterate (OscType &osc, DataType &c, DataType &s, const DataType cos_ptr [], long index_c, long index_s)
 {
+    Q_UNUSED(cos_ptr);
+    Q_UNUSED(index_c);
+    Q_UNUSED(index_s);
 	osc.step ();
 	c = osc.get_cos ();
 	s = osc.get_sin ();
@@ -65,6 +67,7 @@ void	FFTRealUseTrigo <ALGO>::iterate (OscType &osc, DataType &c, DataType &s, co
 template <>
 inline void	FFTRealUseTrigo <0>::iterate (OscType &osc, DataType &c, DataType &s, const DataType cos_ptr [], long index_c, long index_s)
 {
+    Q_UNUSED(osc);
 	c = cos_ptr [index_c];
 	s = cos_ptr [index_s];
 }

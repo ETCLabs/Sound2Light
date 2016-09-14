@@ -39,7 +39,6 @@ Item {
 	property string prefix: ""
 	property string textReplacement: ""  // if set it replaces the displayed number and pre- and suffix
 
-
 	// ------------------------- Private Properties ------------------
 	QtObject {
 		id: priv
@@ -53,7 +52,7 @@ Item {
 		id: displayedText
 		anchors.fill: parent
 		anchors.rightMargin: 10
-		font.pointSize: 10
+        font.pointSize: 10
 		verticalAlignment: Text.AlignVCenter
 		horizontalAlignment: Text.AlignRight
 		color: root.enabled ? "#b5b7ba" : "#555"
@@ -84,44 +83,48 @@ Item {
 
 	// ------------------------ NumBlock Handling ----------------------
 
+    function click() {
+        if (!root.enabled) return
+        if (priv.justClosed) return
+
+        // ------------------ Set Preferred Local Coordinates -------------------
+        // preffered horizontal position is centered above the middle of the NumericInput:
+        var preferredLocalX = (root.width / 2) - (numBlockWidth / 2)
+        // if NumericInput is in the lower half of the window, show the input above
+        var prefferedLocalY = -numBlockHeight
+        // if NumericInput is in the upper half of the window, show the input below
+        if (root.mapToItem(null, 0, 0).y < (Window.height / 2)) {
+            prefferedLocalY = root.height
+        }
+
+        // ---------- Translate Local Coordinates to Screen Coordiantes -----------
+        var windowCoords = root.mapToItem(null, preferredLocalX, prefferedLocalY)
+        var windowGeometry = controller.getWindowGeometryOfItem(root)
+        var screenX = windowGeometry.x + windowCoords.x
+        var screenY = windowGeometry.y + windowCoords.y
+
+
+        // --------------- Check bounds to be visible ----------------
+        screenX = Math.max(0, Math.min(Screen.desktopAvailableWidth - numBlockWidth, screenX))
+        screenY = Math.max(0, Math.min(Screen.desktopAvailableHeight - numBlockHeight, screenY))
+
+
+        // -------------------- Show Window -------------------
+        numBlockWindow.x = screenX
+        numBlockWindow.y = screenY
+
+        numBlockWindow.show()
+        numBlockWindow.requestActivate();
+        // workaround for sizing bug on OS X:
+        numBlockWindow.width = numBlockWidth
+        numBlockWindow.height = numBlockHeight
+    }
+
 	MouseArea {
 		anchors.fill: parent
 
-		onClicked: {
-			if (!root.enabled) return
-			if (priv.justClosed) return
-
-			// ------------------ Set Preferred Local Coordinates -------------------
-			// preffered horizontal position is centered above the middle of the NumericInput:
-			var preferredLocalX = (root.width / 2) - (numBlockWidth / 2)
-			// if NumericInput is in the lower half of the window, show the input above
-			var prefferedLocalY = -numBlockHeight
-			// if NumericInput is in the upper half of the window, show the input below
-			if (root.mapToItem(null, 0, 0).y < (Window.height / 2)) {
-				prefferedLocalY = root.height
-			}
-
-			// ---------- Translate Local Coordinates to Screen Coordiantes -----------
-			var windowCoords = root.mapToItem(null, preferredLocalX, prefferedLocalY)
-			var windowGeometry = controller.getWindowGeometryOfItem(root)
-			var screenX = windowGeometry.x + windowCoords.x
-			var screenY = windowGeometry.y + windowCoords.y
-
-
-			// --------------- Check bounds to be visible ----------------
-			screenX = Math.max(0, Math.min(Screen.desktopAvailableWidth - numBlockWidth, screenX))
-			screenY = Math.max(0, Math.min(Screen.desktopAvailableHeight - numBlockHeight, screenY))
-
-
-			// -------------------- Show Window -------------------
-			numBlockWindow.x = screenX
-			numBlockWindow.y = screenY
-
-			numBlockWindow.show()
-			numBlockWindow.requestActivate();
-			// workaround for sizing bug on OS X:
-			numBlockWindow.width = numBlockWidth
-			numBlockWindow.height = numBlockHeight
+        onClicked: {
+            click()
 		}
 	}
 

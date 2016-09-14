@@ -7,6 +7,8 @@ QT += qml quick multimedia quickwidgets network widgets
 
 CONFIG += c++98 thread
 
+QMAKE_CXXFLAGS += -Wall
+
 SOURCES += main.cpp \
     FFTAnalyzer.cpp \
     MainController.cpp \
@@ -20,7 +22,10 @@ SOURCES += main.cpp \
     TriggerOscParameters.cpp \
     OSCMessage.cpp \
     OSCMapping.cpp \
-    OSCNetworkManager.cpp
+    OSCNetworkManager.cpp \
+    BPMDetector.cpp \
+    BPMOscControler.cpp \
+    BPMTapDetector.cpp
 
 RESOURCES += qml.qrc \
     images.qrc
@@ -71,7 +76,10 @@ HEADERS += \
     OSCMessage.h \
     OSCMapping.h \
     OSCNetworkManager.h \
-    QCircularBuffer.h
+    QCircularBuffer.h \
+    BPMDetector.h \
+    BPMOscControler.h \
+    BPMTapDetector.h
 
 DISTFILES += \
     LICENSE.txt \

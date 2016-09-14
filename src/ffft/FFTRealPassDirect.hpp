@@ -43,6 +43,11 @@ namespace ffft
 template <>
 inline void	FFTRealPassDirect <1>::process (long len, DataType dest_ptr [], DataType src_ptr [], const DataType x_ptr [], const DataType cos_ptr [], long cos_len, const long br_ptr [], OscType osc_list [])
 {
+    Q_UNUSED(osc_list);
+    Q_UNUSED(cos_len);
+    Q_UNUSED(cos_ptr);
+    Q_UNUSED(src_ptr);
+
 	// First and second pass at once
 	const long		qlen = len >> 2;
 

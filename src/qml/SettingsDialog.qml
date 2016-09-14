@@ -256,29 +256,15 @@ Dialog {
 
 			// ----------------------- OK and About Button ----------------------
 
-			Row {
-				width: parent.width
-				height: 30
+            DarkButton {
+                width: parent.width
+                height: 30
+                text: "About"
+                highlightColor: "#555"
+                highlighted: true
+                onClicked: controller.openDialog("qrc:/qml/AboutDialog.qml")
+            }
 
-				DarkButton {
-					width: parent.width / 2
-					height: 30
-					text: "OSC Monitor"
-					highlightColor: "#555"
-					highlighted: true
-					onClicked: {
-						controller.openDialog("qrc:/qml/OscLogDialog.qml")
-					}
-				}
-				DarkButton {
-					width: parent.width / 2
-					height: 30
-					text: "About"
-					highlightColor: "#555"
-					highlighted: true
-					onClicked: controller.openDialog("qrc:/qml/AboutDialog.qml")
-				}
-			}
 
 			Item {  // spacer
 				height: 20

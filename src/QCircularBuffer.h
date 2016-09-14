@@ -452,7 +452,7 @@ public:
 
 	const T &operator[](int i) const
 	{
-		Q_ASSERT_X(i >= 0 && i < d->size, "QCircularBuffer<T>::operator[]", "index out of range");
+        Q_ASSERT_X(i >= 0 && i < d->size, "QCircularBuffer<T>::operator[]", ("index " + std::to_string(i) + " out of range").c_str());
 		return d->data()[d->wraparound(d->first + i)];
 	}
 

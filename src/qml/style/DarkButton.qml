@@ -26,6 +26,8 @@ import QtQuick.Controls.Styles 1.4
 Button {
 	property bool highlighted: false
 	property color highlightColor: "lightgreen"
+    property int fontPointSize: 10
+    property color fontColor: "#b5b7ba"
 	style: ButtonStyle {
 		background: Rectangle {
 			anchors.fill: parent
@@ -40,7 +42,8 @@ Button {
 		}
 		label: GreyText {
 			text: control.text
-			font.pointSize: 10
+            color: fontColor
+            font.pointSize: fontPointSize
 			horizontalAlignment: Text.AlignHCenter
 			verticalAlignment: Text.AlignVCenter
 			elide: Text.ElideRight

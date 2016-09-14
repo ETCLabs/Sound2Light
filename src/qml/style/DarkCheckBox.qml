@@ -26,12 +26,13 @@ import QtQuick.Controls.Styles 1.4
 CheckBox {
 	property int fontSize: 10
 	property color textColor: "#b5b7ba"
+    property color disabledTextColor: "#666"
 	style: CheckBoxStyle {
 		indicator: Rectangle {
 			implicitWidth: 16
 			implicitHeight: 16
 			radius: 3
-			border.color: control.activeFocus ? "darkblue" : "gray"
+            border.color: control.activeFocus ? "darkblue" : (enabled ? "gray" : "#555")
 			border.width: 1
 			gradient: Gradient {
 				GradientStop { position: 0 ; color: control.pressed ? "#444" : "#333" }
@@ -40,7 +41,7 @@ CheckBox {
 			Rectangle {
 				visible: control.checked
 				color: "lightgreen"
-				border.color: "#FFF"
+                border.color: "#FFF"
 				radius: 1
 				anchors.margins: 3
 				anchors.fill: parent
@@ -49,7 +50,7 @@ CheckBox {
 		label: GreyText {
 			text: control.text
 			font.pointSize: fontSize
-			color: textColor
+            color: enabled ? textColor : disabledTextColor
 		}
 	}
 }

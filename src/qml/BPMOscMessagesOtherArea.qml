@@ -20,29 +20,46 @@
 
 import QtQuick 2.5
 import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
+import QtQuick.Dialogs 1.2
 
-// ------------- Dark styled ComboBox -----------------
-ComboBox {
-	style: ComboBoxStyle {
-		background: Rectangle {
-			anchors.fill: parent
-			border.width: 2
-			border.color: "#888"
-			gradient: Gradient {
-				GradientStop { position: 0 ; color: control.pressed ? "#444" : "#333" }
-				GradientStop { position: 1 ; color: control.pressed ? "#555" : "#444" }
-			}
-			Text {
-				text: "▼"
-                color:  enabled ? "#B5B7BA" : "#666666"
-				anchors.right: parent.right
-				anchors.verticalCenter: parent.verticalCenter
-				anchors.rightMargin: 5
-				font.pointSize: 10
-			}
-		}
-        textColor: enabled ? "#888" : "#666"
-		font.pointSize: 10
-	}
+import "oscUtils.js" as Utils
+
+import "style"  // import all files in style dir
+
+
+
+// ----------- Content of the BPM OSC dialog for an unsupported console type -----------
+Item {
+    id: otherArea
+    anchors.fill: parent
+
+    property var messages
+
+    Component.onCompleted: {
+        messages = controller.getBPMOscCommands()
+    }
+
+
+    function getMessages() {
+        return messages
+    }
+
+    GreyText {
+        // Console Label in the top right corner
+        id: consoleLabel
+        text: "Unsupported Console"
+        height: 30
+        anchors.right: parent.right
+        font.pointSize: 12
+        font.bold: true
+    }
+
+    CenterLabel {
+        id: noEffectsText
+
+        y: consoleLabel.height
+        anchors.fill: parent
+
+        text: "Transmitting BPM Information to the selected Console is not \n available in this Version of Sound2Light"
+    }
 }

@@ -27,6 +27,8 @@
 #include <QByteArray>
 #include <QDebug>
 
+#include <iostream>
+
 QAudioInputWrapper::QAudioInputWrapper(MonoAudioBuffer *buffer)
     : AudioInputInterface(buffer)
     , m_audioInput(0)

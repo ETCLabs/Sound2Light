@@ -687,9 +687,9 @@ Item {
 			function restoreFromMessages() {
 				// restore values from current messages:
 				if (triggerController.getOnMessage() !== "") {
-					onCueCheckbox.checked = true
-					onCueList.value = Utils.thirdPartAsInt(triggerController.getOnMessage(), 1)
-					onCueNumber.text = Utils.fourthPartAsString(triggerController.getOnMessage(), "1")
+                    onCueCheckbox.checked = true
+                    onCueList.value = Utils.partAsInt(triggerController.getOnMessage(), 5, 1)
+                    onCueNumber.text = Utils.partAsString(triggerController.getOnMessage(), 6, "1")
 				}
 				if (triggerController.getOffMessage() !== "") {
 					offCueCheckbox.checked = true

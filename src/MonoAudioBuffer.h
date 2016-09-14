@@ -40,15 +40,18 @@ public:
 	// returns the value in the buffer at index i
 	const qreal& at(int i) const { return m_buffer[i]; }
 
+    // returns the number of samples that have ever been put in the buffer
+    int64_t getNumPutSamples() const { return m_numPutSamples; }
+    int getCapacity() const { return m_capacity; }
 
 protected:
 	// Converts PCM data with multiple channels to mono by averaging all channels.
 	// Result is saved inplace and data object will be resized.
 	void convertToMonoInplace(QVector<qreal>& data, const int& channelCount) const;
 
-	const int	m_capacity;  // max capacity of the buffer, should be length of FFT
+    const int    m_capacity;  // max capacity of the buffer, should be length of FFT
 	Qt3DCore::QCircularBuffer<qreal>	m_buffer;  // a circular buffer, removing the oldest elements when inserting new ones
-
+    int64_t      m_numPutSamples; // the number of samples that have ever been put into the buffer
 };
 
 #endif // MONOAUDIOBUFFER_H

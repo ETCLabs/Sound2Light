@@ -28,17 +28,49 @@ import "style"  // import all files in style dir
 ApplicationWindow {
 	id: window
 	visible: true
-	width: 700
-	height: 700
-	minimumWidth: 600
-	minimumHeight: 550
+    width: minimalMode ? 160 : 1200
+    height: minimalMode ? 200 : 800
+    minimumWidth:  100
+    minimumHeight: 100
+    maximumWidth:  40000
+    maximumHeight: 40000
+
+
 	title: qsTr("ETC - Sound2Light")
 
-	onClosing: {
-		// destroy all chilrden when window is closed
-		// to prevent property bindings pointing to null because controller is already deleted
-		splitView.destroy()
+    // the minimal mode property, as an alias from the bpm settings where it is manipulated
+    property alias minimalMode: spectrumWithControls.minimalMode
+
+    onClosing: {
+        // Closing on minimal mode messes up the saved window size. rather end minimal mode.
+        // this still quits afterwards becuase the controller is already deleted
+        // but the window at least restores its size first
+        if (minimalMode) {
+            minimalMode = false
+            close.accepted = false;
+        }
+        // destroy all chilrden when window is closed
+        // to prevent property bindings pointing to null because controller is already deleted
+        splitView.destroy()
 	}
+
+    Action {
+        id: tapAction
+        text: "Tap Tempo"
+        shortcut: "Return"
+        onTriggered: {
+            controller.triggerBeat()
+        }
+    }
+
+    Action {
+        id: bpmToggleAction
+        text: "Enable BPM Detection"
+        shortcut: "Escape"
+        onTriggered: {
+            controller.setBPMActive(true)
+        }
+    }
 
 	DarkBlueStripedBackground {}
 
@@ -50,16 +82,17 @@ ApplicationWindow {
 
 		// -------------------------- Top Area with Spectrum ---------------------------
 		SpectrumWithControls {
-			id: spectrumWithControls
+            id: spectrumWithControls
 			Layout.fillHeight: true
-			Layout.minimumHeight: 200
+            Layout.minimumHeight: minimalMode ? 200 : 260
 		}
 
 		// -------------------------- Bottom Area with Trigger Settings ---------------------------
 		TriggerSettingsArea {
 			id: triggerSettingsArea
-			Layout.minimumHeight: detailsVisible ? 320 : 150
-			height: 400
+            visible: minimalMode ? false : true
+            Layout.minimumHeight: minimalMode ? 0 : detailsVisible ? 370 : 250
+            height: minimalMode ? 0 : 400
 		}
 
 	}

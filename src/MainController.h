@@ -22,6 +22,8 @@
 #define MAINCONTROLLER_H
 
 #include "FFTAnalyzer.h"
+#include "BPMDetector.h"
+#include "BPMTapDetector.h"
 #include "MonoAudioBuffer.h"
 #include "AudioInputInterface.h"
 #include "OSCNetworkManager.h"
@@ -29,6 +31,7 @@
 #include "versionInfo.h"
 
 #include <QObject>
+#include <QDebug>
 #include <QSettings>
 #include <QQmlApplicationEngine>
 #include <QQuickWindow>
@@ -38,6 +41,7 @@
 #include <QGuiApplication>
 #include <QQuickItem>
 
+#include <iostream>
 
 // Rate to calculate the FFT (and Trigger signals) in Hz / FPS
 static const int FFT_UPDATE_RATE = 44; // Hz
@@ -117,6 +121,15 @@ signals:
     // emitted when lowSoloMode changed
     void lowSoloModeChanged();
 
+    // emitted if the bpm activation changed
+    void bpmActiveChanged();
+
+    // emitted if the bpm range changed
+    void bpmRangeChanged();
+
+    // emitted if the waveform visiblity changed
+    void waveformVisibleChanged();
+
 	// forwarded from OSCNetworkManager:
 	void messageReceived(OSCMessage msg);
 	void packetSent();
@@ -131,6 +144,10 @@ public slots:
 	// initializes the audio input
 	void initAudioInput();
 
+    // activates or deactivates the bpm detectin
+    void activateBPM();
+    void deactivateBPM();
+
 	// saves settings before application exits
 	void onExit();
 
@@ -144,7 +161,11 @@ public slots:
 	// restores the window size and position
 	void restoreWindowGeometry();
 
+    // update function passed to the FFTAnalyzer
     void updateFFT() { m_fft.calculateFFT(m_lowSoloMode); }
+
+    // update function passed to the BPMDetector
+    void updateBPM() { m_bpm.detectBPM(); }
 
 	// ------------------- Presets --------------------------------
 
@@ -202,6 +223,43 @@ public slots:
 
 	// returns the current version string
 	QString getVersionString() { return VERSION_STRING; }
+
+    // Triggers a BPM Tap
+    void triggerBeat();
+
+    // Sets a manual BPM
+    void setBPM(float value);
+
+    // returns if the bpm detection is currently active
+    bool getBPMActive() { return m_bpmActive; }
+    bool getBPMManual() { return m_bpmTap.hasBpm() && !m_bpmActive; }
+    // enable or disables bpm detection
+    void setBPMActive(bool value);
+
+    // forward calls to BPMDetector
+    // returns the current bpm
+    float getBPM() { return getBPMManual() || m_bpm.getBPM() == 0.0 ? m_bpmTap.getBpm() : m_bpm.getBPM(); }
+    // returns if the detected bpm is old and should be marked as such in the gui
+    bool bpmIsOld() { return m_bpm.bpmIsOld(); }
+    // sets the minium bpm of the range
+    void setMinBPM(int value);
+    // gets the minium bpm of the range
+    int getMinBPM() { return m_bpm.getMinBPM(); }
+
+    // set/get the waveform visibility
+    bool getWaveformVisible() { return m_waveformVisible & m_bpmActive; }
+    void setWaveformVisible(bool value) { m_waveformVisible = value; emit waveformVisibleChanged();}
+
+    // returns the last seconds of waveform as a list of qreal values in the range 0...1
+    // as well as the marks where a peak was detected as a boolean value and colors that represent the spectrum
+    // used in GUI to display the BeatPlot
+    QList<qreal> getWavePoints();
+    QList<bool> getWaveOnsets();
+    QList<QString> getWaveColors();
+
+    // Gets or sets the osc commands sent by the bpm detector
+    QStringList getBPMOscCommands() { return m_bpmOSC.getCommands(); }
+    void setBPMOscCommands(const QStringList commands) { m_bpmOSC.setCommands(commands); }
 
 	// forward calls to AudioInputInterface
 	// see AudioInputInterface.h for documentation
@@ -300,7 +358,7 @@ public:  // to allow access from OSCMapping class without getters
 	TriggerGuiController* m_loMidController;  // GUI Controller for LoMid TriggerGenerator
 	TriggerGuiController* m_hiMidController;  // GUI Controller for HiMid TriggerGenerator
 	TriggerGuiController* m_highController;  // GUI Controller for High TriggerGenerator
-	TriggerGuiController* m_envelopeController;  // GUI Controller for Level TriggerGenerator
+    TriggerGuiController* m_envelopeController;  // GUI Controller for Level TriggerGenerator
 	TriggerGuiController* m_silenceController;  // GUI Controller for Silence TriggerGenerator
 
 protected:
@@ -318,6 +376,12 @@ protected:
 	OSCMapping					m_oscMapping;  // OSCMapping instance
 	QTimer						m_oscUpdateTimer;  // Timer used to trigger OSC level feedback
     bool                        m_lowSoloMode;  // true if low solo mode is active
+    BPMOscControler             m_bpmOSC; // Manages transmiting the bpm via osc
+    BPMDetector                 m_bpm; // BPMDetector instance
+    BPMTapDetector              m_bpmTap; // BPMTapDetector instance
+    bool                        m_bpmActive; // true if the bpm detection is active
+    QTimer                      m_bpmUpdatetimer; // Timer to trigger bpm update
+    bool                        m_waveformVisible; // true if the waveform is visible
 
 	TriggerGenerator* m_bass;  // pointer to Bass TriggerGenerator instance
 	TriggerGenerator* m_loMid;  // pointer to LoMid TriggerGenerator instance

@@ -6,5 +6,8 @@
         <file>images/icons/etcicon.icns</file>
         <file>images/icons/etclogo.png</file>
         <file>images/icons/etcicon.ico</file>
+        <file>images/maximize.png</file>
+        <file>images/minimize.png</file>
+        <file>images/edit.png</file>
     </qresource>
 </RCC>

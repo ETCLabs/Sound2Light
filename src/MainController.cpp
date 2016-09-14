@@ -39,13 +39,18 @@
 MainController::MainController(QQmlApplicationEngine* qmlEngine, QObject *parent)
 	: QObject(parent)
 	, m_qmlEngine(qmlEngine)
-	, m_buffer(NUM_SAMPLES)
+    , m_buffer(NUM_SAMPLES*4) // more buffer so the bpm detector can get overlaping data
 	, m_audioInput(0)
 	, m_fft(m_buffer, m_triggerContainer)
 	, m_osc()
 	, m_consoleType("EOS")
 	, m_oscMapping(this)
     , m_lowSoloMode(false)
+    , m_bpmOSC(m_osc)
+    , m_bpm(m_buffer, &m_bpmOSC)
+    , m_bpmTap(&m_bpmOSC)
+    , m_bpmActive(false)
+    , m_waveformVisible(true)
 {
 	m_audioInput = new QAudioInputWrapper(&m_buffer);
 
@@ -210,6 +215,38 @@ void MainController::initAudioInput()
 	// start FFT update timer:
 	connect(&m_fftUpdateTimer, SIGNAL(timeout()), this, SLOT(updateFFT()));
 	m_fftUpdateTimer.start(1000.0 / FFT_UPDATE_RATE);
+
+    // set up the BPM timer and start it
+    connect(&m_bpmUpdatetimer, SIGNAL(timeout()), this, SLOT(updateBPM()));
+    setBPMActive(m_bpmActive);
+}
+
+void MainController::triggerBeat()
+{
+    if (m_bpmActive) {
+        setBPMActive(false);
+    }
+    m_bpmTap.triggerBeat();
+}
+
+void MainController::setBPM(float value)
+{
+    if (m_bpmActive) {
+        setBPMActive(false);
+    }
+    m_bpmTap.setBpm(value);
+}
+
+void MainController::activateBPM()
+{
+    m_bpm.resetCache();
+    m_bpmTap.reset();
+    m_bpmUpdatetimer.start(1000.0 / BPM_UPDATE_RATE);
+}
+
+void MainController::deactivateBPM()
+{
+    m_bpmUpdatetimer.stop();
 }
 
 void MainController::setConsoleType(QString value)
@@ -233,9 +270,63 @@ QList<qreal> MainController::getSpectrumPoints()
 	return points;
 }
 
+QList<qreal> MainController::getWavePoints()
+{
+    // convert const QVector<float>& to QList<qreal> to be used in GUI:
+    QList<qreal> points;
+    const Qt3DCore::QCircularBuffer<float>& wave = m_bpm.getWaveDisplay();
+    for (int i = 0; i < wave.size(); ++i) {
+        points.append(wave.at(i) / 350 * m_fft.getScaledSpectrum().getGain());
+    }
+    return points;
+}
+
+QList<bool> MainController::getWaveOnsets()
+{
+    // conert const QVector<bool>& to QList<bool> to be used in GUI:
+    QList<bool> points;
+    const QVector<bool>& peaks = m_bpm.getOnsets();
+    for (int i = 0; i < peaks.size(); ++i) {
+        points.append(peaks[i]);
+    }
+    return points;
+}
+
+QList<QString> MainController::getWaveColors()
+{
+    // convert const QVector<QColoer>& to QList<QString> to be used in GUI:
+    QList<QString> points;
+    const Qt3DCore::QCircularBuffer<QColor>& colors = m_bpm.getWaveColors();
+    for (int i = 0; i < colors.size(); ++i) {
+        points.append(colors.at(i).name());
+    }
+    return points;
+}
+
 void MainController::setOscEnabled(bool value) {
 	m_osc.setEnabled(value); emit settingsChanged();
 	m_osc.sendMessage(QString("/s2l/out/enabled=").append(value ? "1" : "0"), true);
+}
+
+// enable or disables bpm detection
+void MainController::setBPMActive(bool value) {
+    m_bpmActive = value;
+    if (m_bpmActive) {
+        activateBPM();
+    } else {
+        deactivateBPM();
+    }
+    emit bpmActiveChanged();
+    emit waveformVisibleChanged(); // because wavformvisible is only true if bpm is active
+    m_osc.sendMessage("/s2l/out/bpm/enabled", (value ? "1" : "0"), true);
+}
+
+// sets the minium bpm of the range
+void MainController::setMinBPM(int value) {
+    m_bpm.setMinBPM(value);
+    m_bpmTap.setMinBPM(value);
+    emit bpmRangeChanged();
+    m_osc.sendMessage("/s2l/out/bpm/range", QString::number(value), true);
 }
 
 void MainController::onExit()
@@ -366,11 +457,19 @@ void MainController::loadPreset(const QString &constFileName, bool createIfNotEx
 	setAgcEnabled(settings.value("agcEnabled").toBool());
 	setConsoleType(settings.value("consoleType").toString());
     setLowSoloMode(settings.value("lowSoloMode").toBool());
+    setBPMActive(settings.value("bpm/Active", false).toBool());
+    setWaveformVisible(settings.value("waveformVisible", true).toBool());
 
 	// restore the settings in all TriggerGenerators:
 	for (int i=0; i<m_triggerContainer.size(); ++i) {
 		m_triggerContainer[i]->restore(settings);
 	}
+
+    // Restore the settings in the BPMDetector (from here to keep BPM Detector modular)
+    setMinBPM(settings.value("bpm/Min", 75).toInt());
+
+    // Restore the settings in the BPMOscController
+    m_bpmOSC.restore(settings);
 
 	// this is now the loaded preset, update the preset name:
 	m_currentPresetFilename = fileName; emit presetNameChanged();
@@ -385,6 +484,9 @@ void MainController::loadPreset(const QString &constFileName, bool createIfNotEx
 	emit agcEnabledChanged();
 	emit gainChanged();
 	emit compressionChanged();
+    emit bpmActiveChanged();
+    emit bpmRangeChanged();
+    emit waveformVisibleChanged();
 
 	emit m_bassController->parameterChanged();
 	emit m_loMidController->parameterChanged();
@@ -427,11 +529,19 @@ void MainController::savePresetAs(const QString &constFileName, bool isAutosave)
 	settings.setValue("agcEnabled", getAgcEnabled());
 	settings.setValue("consoleType", getConsoleType());
     settings.setValue("lowSoloMode", getLowSoloMode());
+    settings.setValue("bpm/Active", getBPMActive());
+    settings.setValue("waveformVisible", m_waveformVisible); // store property because getter is for GUI, and only returns true if bpm is active
 
 	// save the settings in all TriggerGenerators:
 	for (int i=0; i<m_triggerContainer.size(); ++i) {
 		m_triggerContainer[i]->save(settings);
 	}
+
+    // save the settings in the BPMDetector (from here to keep BPM Detector modular)
+    settings.setValue("bpm/Min", m_bpm.getMinBPM());
+
+    // save the settings in the BPMOscController
+    m_bpmOSC.save(settings);
 
 	if (!isAutosave) {
 		// this is now the loaded preset, update the preset name:
@@ -488,6 +598,14 @@ void MainController::resetPreset()
 	setAgcEnabled(true);
 	setDecibelConversion(false);
     setLowSoloMode(false);
+    setBPMActive(false);
+    setMinBPM(75);
+    setBPMOscCommands(QStringList());
+    setWaveformVisible(true);
+
+    emit bpmActiveChanged();
+    emit bpmRangeChanged();
+    emit waveformVisibleChanged();
 
 	// reset values in all TriggerGuiControllers:
 	m_bassController->resetParameters();

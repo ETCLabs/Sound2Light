@@ -32,13 +32,13 @@ Row {
 	// ------------------------------------ Legend -------------------
 	TriggerSettingsLegend {
 		id: legend
-		width: parent.width / 7
+        width: parent.width / 7
 		height: parent.height
 	}
 	// ------------------------------------ Bass -------------------
 	TriggerSettings {
 		detailsVisible: legend.detailsVisible
-		width: parent.width / 7
+        width: parent.width / 7
 		height: parent.height
 		triggerName: "Bass"
 		triggerController: bassController
@@ -47,7 +47,7 @@ Row {
 	// ------------------------------------ LoMid -------------------
 	TriggerSettings {
 		detailsVisible: legend.detailsVisible
-		width: parent.width / 7
+        width: parent.width / 7
 		height: parent.height
 		triggerName: "LoMid"
 		triggerController: loMidController
@@ -56,7 +56,7 @@ Row {
 	// ------------------------------------ HiMid -------------------
 	TriggerSettings {
 		detailsVisible: legend.detailsVisible
-		width: parent.width / 7
+        width: parent.width / 7
 		height: parent.height
 		triggerName: "HiMid"
 		triggerController: hiMidController
@@ -65,7 +65,7 @@ Row {
 	// ------------------------------------ High -------------------
 	TriggerSettings {
 		detailsVisible: legend.detailsVisible
-		width: parent.width / 7
+        width: parent.width / 7
 		height: parent.height
 		triggerName: "High"
 		triggerController: highController
@@ -75,7 +75,7 @@ Row {
 	// ------------------------------------ Level -------------------
 	TriggerSettings {
 		detailsVisible: legend.detailsVisible
-		width: parent.width / 7
+        width: parent.width / 7
 		height: parent.height
 		triggerName: "Level"
 		triggerController: envelopeController
@@ -85,11 +85,12 @@ Row {
 	// ------------------------------------ Silence -------------------
 	TriggerSettings {
 		detailsVisible: legend.detailsVisible
-		width: parent.width / 7
+        width: parent.width / 7
 		height: parent.height
 		triggerName: "Silence"
 		triggerController: silenceController
 		color: Qt.rgba(0, 0, 0, 0)
 		isBandpass: false
-	}
+    }
+
 }

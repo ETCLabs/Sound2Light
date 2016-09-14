@@ -62,12 +62,32 @@ void OSCMapping::handleMessage(OSCMessage msg)
 				m_controller->loadPreset(presetDir + arg.toString() + ".s2l");
 			}
 		}
-	}
+    } else if (msg.pathStartsWith("/s2l/bpm/enabled/toggle")) {
+        // togle bpm recognition
+        if (msg.isTrue()) {
+            m_controller->setBPMActive(!m_controller->getBPMActive());
+        }
+    } else if (msg.pathStartsWith("/s2l/bpm/enabled")) {
+        // set bpm recognition on/of
+        m_controller->setBPMActive(msg.isTrue());
+    } else if (msg.pathStartsWith("/s2l/bpm/range")) {
+        // Sets the range for the bpm detection by the minimum (max is always 2* min)
+        if (msg.arguments().size() == 1) {
+            int minBPM = msg.arguments().at(0).toInt();
+            // Round to the values presented in the gui to avoid confusion
+            m_controller->setMinBPM(minBPM);
+        }
+    } else if (msg.pathStartsWith("/s2l/bpm/tap")) {
+        // Taps the bpm if there is no argument, or an enable argument
+        if (msg.arguments().size() == 0 || msg.arguments().at(0).toBool()) {
+            m_controller->triggerBeat();
+        }
+    }
 }
 
 void OSCMapping::sendLevelFeedback()
 {
-	// send the levels of the bandpasses via OSC as feedback:
+    // send the levels of the bandpasses and the bpm via OSC as feedback:
 
 	qreal bassValue = m_controller->m_bassController->getCurrentLevel();
 	m_controller->sendOscMessage(QString("/s2l/out/bass=").append(QString::number(bassValue, 'f', 3)), true);
@@ -86,6 +106,7 @@ void OSCMapping::sendLevelFeedback()
 
 	qreal silenceValue = m_controller->m_silenceController->getCurrentLevel();
 	m_controller->sendOscMessage(QString("/s2l/out/silence=").append(QString::number(silenceValue, 'f', 3)), true);
+
 }
 
 void OSCMapping::sendCurrentState()
@@ -96,4 +117,11 @@ void OSCMapping::sendCurrentState()
 
 	// Active Preset Name:
 	m_controller->sendOscMessage("/s2l/out/active_preset", m_controller->getPresetName(), true);
+
+    // BPM Enabled
+    bool bpmEnabled = m_controller->getBPMActive();
+    m_controller->sendOscMessage("/s2l/out/bpm/enabled", (bpmEnabled ? "1" : "0"), true);
+
+    // BPM Range
+    m_controller->sendOscMessage("/s2l/out/bpm/range", QString::number(m_controller->getMinBPM()), true);
 }

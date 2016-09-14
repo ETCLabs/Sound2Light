@@ -462,6 +462,8 @@ bool OSCArgument::Init(EnumArgumentTypes type, char *buf, size_t size)
 		case OSC_TYPE_INFINITY:
 			m_Size = 0;
 			return true;
+        default:
+            break;
 	}
 
 	return false;
@@ -512,6 +514,8 @@ bool OSCArgument::GetFloat(float &f) const
 		case OSC_TYPE_INFINITY:
 			f = FLT_MAX;
 			return true;
+        default:
+            break;
 	}
 
 	return false;
@@ -562,6 +566,8 @@ bool OSCArgument::GetDouble(double &d) const
 		case OSC_TYPE_INFINITY:
 			d = DBL_MAX;
 			return true;
+        default:
+            break;
 	}
 
 	return false;
@@ -620,6 +626,8 @@ bool OSCArgument::GetInt(int &n) const
 		case OSC_TYPE_INFINITY:
 			n = INT_MAX;
 			return true;
+        default:
+            break;
 	}
 
 	return false;
@@ -678,6 +686,8 @@ bool OSCArgument::GetUInt(unsigned int &n) const
 		case OSC_TYPE_INFINITY:
 			n = UINT_MAX;
 			return true;
+        default:
+            break;
 	}
 
 	return false;
@@ -736,6 +746,8 @@ bool OSCArgument::GetInt64(int64_t &n) const
 		case OSC_TYPE_INFINITY:
 			n = INT64_MAX;
 			return true;
+        default:
+            break;
 	}
 
 	return false;
@@ -794,6 +806,8 @@ bool OSCArgument::GetUInt64(uint64_t &n) const
 		case OSC_TYPE_INFINITY:
 			n = UINT64_MAX;
 			return true;
+        default:
+            break;
 	}
 
 	return false;
@@ -867,6 +881,8 @@ bool OSCArgument::GetString(std::string &str) const
 		case OSC_TYPE_INFINITY:
 			str = "Infinity";
 			return true;
+        default:
+            break;
 	}
 
 	return false;
@@ -933,6 +949,8 @@ bool OSCArgument::GetBool(bool &b) const
 		case OSC_TYPE_NULL:
 			b = false;
 			return true;
+        default:
+            break;
 	}
 
 	return false;
@@ -1057,6 +1075,7 @@ char OSCArgument::GetCharFromArgumentType(EnumArgumentTypes type)
 		case OSC_TYPE_FALSE:	return 'F';
 		case OSC_TYPE_NULL:		return 'N';
 		case OSC_TYPE_INFINITY:	return 'I';
+        default:                return 0;
 	}
 
 	return 0;
@@ -1379,6 +1398,8 @@ void OSCPacketWriter::sArgInfo::clear()
 				}
 			}
 			break;
+        default:
+            break;
 	}
 
 	type = OSCArgument::OSC_TYPE_INVALID;
@@ -1517,6 +1538,8 @@ void OSCPacketWriter::WriteArg(char *buf, const sArgInfo &info) const
 		case OSCArgument::OSC_TYPE_BLOB:
 			memcpy(buf, info.data.binaryData, info.size);
 			break;
+        default:
+            break;
 	}
 }
 
@@ -1839,6 +1862,8 @@ void OSCPacketWriter::AddOSCArg(const OSCArgument &arg)
 		case OSCArgument::OSC_TYPE_INFINITY:
 			AddInfinity();
 			break;
+        default:
+            break;
 	}
 }
 
