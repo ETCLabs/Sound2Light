@@ -134,7 +134,7 @@ Dialog {
 					text: "OK"
 					onClicked: {
 						var messages = mainArea.getMessages()
-						triggerController.setOscMessages(messages["on"], messages["off"], messages["level"], messages["levelMin"], messages["levelMax"], messages["shortText"])
+                        triggerController.setOscMessages(messages["on"], messages["off"], messages["level"], messages["range"], messages["levelMin"], messages["levelMax"], messages["shortText"])
 						dialog.close()
 						controller.dialogIsClosed(dialog)
 					}
