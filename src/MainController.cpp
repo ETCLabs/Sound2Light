@@ -34,6 +34,8 @@
 #include <QDateTime>
 #include <QScreen>
 #include <QFileDialog>
+#include <QQmlDebuggingEnabler>
+
 
 
 MainController::MainController(QQmlApplicationEngine* qmlEngine, QObject *parent)
@@ -56,6 +58,7 @@ MainController::MainController(QQmlApplicationEngine* qmlEngine, QObject *parent
 
 	initializeGenerators();
 	connectGeneratorsWithGui();
+    QQmlDebuggingEnabler enabler;
 }
 
 MainController::~MainController()
@@ -163,8 +166,10 @@ void MainController::connectGeneratorsWithGui()
 
 QQuickWindow *MainController::getMainWindow() const
 {
-	QQuickWindow* window = qobject_cast<QQuickWindow*>(m_qmlEngine->rootObjects()[0]);
-	return window;
+    QList<QObject*> objects = m_qmlEngine->rootObjects();
+    if(objects.isEmpty())
+        return 0;
+    return qobject_cast<QQuickWindow*>(m_qmlEngine->rootObjects()[0]);
 }
 
 bool MainController::settingsFormatIsValid(QSettings &settings) const

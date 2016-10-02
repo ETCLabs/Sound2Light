@@ -105,6 +105,7 @@ protected:
     // This is a lookup table generated to tell us which group a given value appears in
     // It should be recalculated any time the channel range changes.
     QHash<int, int>     m_groupingHash;
+    int             m_rangeCount; // Count of items in the range, calculated in generateRangeHash()
 	const bool		m_invert;  // true if signal values should be inverted (i.e. for "silence" trigger)
 	int				m_midFreq;  // middle frequency of bandpass in Hz
 	const int		m_defaultMidFreq;  // default midFreq in Hz, used for reset
