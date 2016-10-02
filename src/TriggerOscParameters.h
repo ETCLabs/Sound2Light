@@ -25,6 +25,7 @@
 #include <QString>
 #include <QSettings>
 
+#include <QDebug> //TODO REMOVE THIS
 
 // A class to store OSC parameters (messages and min and max values).
 class TriggerOscParameters
@@ -46,6 +47,11 @@ public:
 	QString getLevelMessage() const { return m_levelMessage; }
 	// sets the OSC path where the level value should be sent to
 	void setLevelMessage(const QString& value) { m_levelMessage = value; }
+
+    // returns the OSC path where the level value should be sent to
+    QStringList getRangeMessage() const { return m_rangeMessage; }
+    // sets the OSC path where the level value should be sent to
+    void setRangeMessage(const QStringList& value) { qDebug() << value; m_rangeMessage = value; }
 
 	// returns the value to send when the trigger level is zero
 	qreal getMinLevelValue() const { return m_minLevelValue; }
@@ -76,6 +82,7 @@ protected:
 	QString		m_onMessage;  // On message ("/path/value=argument")
 	QString		m_offMessage;  // Off message ("/path/value=argument")
 	QString		m_levelMessage;  // Level message ("/path/value=")
+    QStringList m_rangeMessage;
 	qreal		m_minLevelValue;  // min value to be used for Level message
 	qreal		m_maxLevelValue;  // max value to be used for Level message
 	QString		m_labelText;  // Short description text of parameters to be displayed in UI

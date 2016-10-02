@@ -44,13 +44,13 @@ TriggerGenerator::TriggerGenerator(QString name, OSCNetworkManager* osc, bool is
 bool TriggerGenerator::checkForTrigger(ScaledSpectrum &spectrum, bool forceRelease)
 {
 	qreal value;
+
 	if (m_isBandpass) {
 		value = spectrum.getMaxLevel(m_midFreq, m_width);
 	} else {
 		value = spectrum.getMaxLevel();
 	}
-	if (m_invert) value = 1 - value;
-
+    if (m_invert) value = 1 - value;
 	// check for trigger:
     if ((!m_isActive && value >= m_threshold) && !forceRelease) {
 		// activate trigger:
@@ -61,10 +61,25 @@ bool TriggerGenerator::checkForTrigger(ScaledSpectrum &spectrum, bool forceRelea
 		m_isActive = false;
 		m_filter.triggerOff();
 	}
+    qreal diff = qAbs(m_lastValue - value);
+    // If a range message is set, we need to do some math.
+//    qDebug() << m_oscParameters.getRangeMessage();
+    const int count = m_oscParameters.getRangeMessage().size();
+    if (count > 0 && diff > 0.001) {
+        // Divide into range based on threshold
+        int scaledValue = value * 100;  // number between 0 - 100 like 48 count = 4 trigger = 12;
+        int perSection = scaledValue / count;
 
+        int numberToDisplay = m_groupingHash.value(scaledValue);
+//        qDebug() << "Display # " << numberToDisplay << " persection: " << perSection << "value" << scaledValue;
+        for(int i = 0; i < numberToDisplay; i++) {
+            m_osc->sendMessage(m_oscParameters.getRangeMessage()[i] + QString::number(perSection * i, 'f', 3));
+        }
+
+    }
 	// send level if levelMessage is set:
 	// and if difference to last value is greater than 0.001:
-	qreal diff = qAbs(m_lastValue - value);
+
 	if (diff > 0.001 && !m_oscParameters.getLevelMessage().isEmpty() && m_threshold > 0) {
 		qreal valueUnderThreshold = limit(0, (value / m_threshold), 1);
 		qreal minValue = m_oscParameters.getMinLevelValue();
@@ -76,6 +91,16 @@ bool TriggerGenerator::checkForTrigger(ScaledSpectrum &spectrum, bool forceRelea
 
 	m_lastValue = value;
     return m_isActive;
+}
+
+void TriggerGenerator::generateRangeHash(int grouping)
+{
+    for(int i = 0; i <= 100; i++ ) {
+        static int groupSpacing = 100 / grouping;
+        int group = i / groupSpacing +1;
+//            qDebug() << "inserting: " << i << " into group: " << group;
+        m_groupingHash.insert(i, group);
+    }
 }
 
 void TriggerGenerator::save(QSettings& settings) const

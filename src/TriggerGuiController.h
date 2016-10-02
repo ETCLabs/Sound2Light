@@ -100,6 +100,9 @@ public slots:
 	QString getLevelMessage() const { return m_trigger->getOscParameters().getLevelMessage(); }
 	void setLevelMessage(const QString& value) {m_trigger->getOscParameters().setLevelMessage(value); emit presetChanged(); }
 
+    QStringList getRangeMessage() const { return m_trigger->getOscParameters().getRangeMessage(); }
+    void setRangeMessage(const QStringList& value) {m_trigger->getOscParameters().setRangeMessage(value); emit presetChanged(); }
+
 	qreal getMinLevelValue() const { return m_trigger->getOscParameters().getMinLevelValue(); }
 	void setMinLevelValue(const qreal& value) { m_trigger->getOscParameters().setMinLevelValue(value); emit presetChanged(); }
 
@@ -110,11 +113,15 @@ public slots:
 	void setLabelText(const QString& value) { m_trigger->getOscParameters().setLabelText(value); emit oscLabelTextChanged(); emit presetChanged(); }
 
 	// --- shortcut to set all OSC parameters:
-	void setOscMessages(QString on, QString off, QString level, qreal minLevel, qreal maxLevel, QString labelText)
-	{
+    void setOscMessages(QString on, QString off, QString level, QStringList range, qreal minLevel, qreal maxLevel, QString labelText)
+    {
+        qDebug() << "Range: " << range;
+        if(range.size() > 0)
+            m_trigger->generateRangeHash(range.size());
 		m_trigger->getOscParameters().setOnMessage(on);
 		m_trigger->getOscParameters().setOffMessage(off);
 		m_trigger->getOscParameters().setLevelMessage(level);
+        m_trigger->getOscParameters().setRangeMessage(range);
 		m_trigger->getOscParameters().setMinLevelValue(minLevel);
 		m_trigger->getOscParameters().setMaxLevelValue(maxLevel);
 		m_trigger->getOscParameters().setLabelText(labelText);
