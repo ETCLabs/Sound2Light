@@ -63,18 +63,28 @@ bool TriggerGenerator::checkForTrigger(ScaledSpectrum &spectrum, bool forceRelea
 	}
     qreal diff = qAbs(m_lastValue - value);
     // If a range message is set, we need to do some math.
-//    qDebug() << m_oscParameters.getRangeMessage();
-    const int count = m_oscParameters.getRangeMessage().size();
-    if (count > 0 && diff > 0.001) {
+    if (m_rangeCount > 0 && diff > 0.001) {
         // Divide into range based on threshold
-        int scaledValue = value * 100;  // number between 0 - 100 like 48 count = 4 trigger = 12;
-        int perSection = scaledValue / count;
-
+        int scaledValue = value * 100;  // number between 0 - 100
+        int perSection = scaledValue / m_rangeCount;
         int numberToDisplay = m_groupingHash.value(scaledValue);
-//        qDebug() << "Display # " << numberToDisplay << " persection: " << perSection << "value" << scaledValue;
-        for(int i = 0; i < numberToDisplay; i++) {
-            m_osc->sendMessage(m_oscParameters.getRangeMessage()[i] + QString::number(perSection * i, 'f', 3));
-        }
+        qDebug() << "OSC Range: " << m_oscParameters.getRangeMessage()[0] + " numberToDisplay " << numberToDisplay;
+
+
+        const int startChan = m_oscParameters.getRangeMessage()[1].toInt();
+        // Four Paramaters, Start channel, end channel, start value, end value
+        const QString cmd = m_oscParameters.getRangeMessage()[0] /*cmd*/
+                                + QString::number(startChan) // %1 is the
+                                + "," + QString::number(startChan + numberToDisplay)
+                                + ",01," + QString::number(numberToDisplay*perSection);
+        m_osc->sendMessage(cmd);
+
+        const QString zeroCmd = QString("/eos/user/0/newcmd/Chan/"
+                            + QString::number(startChan+ numberToDisplay + 1)
+                            + "/Thru/"
+                            + m_oscParameters.getRangeMessage()[2] /* endChan as string */
+                            + "/At/0#");
+        m_osc->sendMessage(zeroCmd);
 
     }
 	// send level if levelMessage is set:
@@ -95,10 +105,13 @@ bool TriggerGenerator::checkForTrigger(ScaledSpectrum &spectrum, bool forceRelea
 
 void TriggerGenerator::generateRangeHash(int grouping)
 {
+    const int endChan = m_oscParameters.getRangeMessage()[2].toInt();
+    const int startChan =  m_oscParameters.getRangeMessage()[1].toInt();
+    m_rangeCount = endChan - startChan;
+    qDebug() << "Generating Hash for: " << startChan << " - " << endChan;
+    const int groupSpacing = qFloor(100 / (m_rangeCount+1));
     for(int i = 0; i <= 100; i++ ) {
-        static int groupSpacing = 100 / grouping;
-        int group = i / groupSpacing +1;
-//            qDebug() << "inserting: " << i << " into group: " << group;
+        const int group = qFloor(i / (groupSpacing+1));
         m_groupingHash.insert(i, group);
     }
 }

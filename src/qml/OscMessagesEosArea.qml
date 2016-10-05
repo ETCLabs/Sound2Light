@@ -330,12 +330,12 @@ Item {
 
 
             function getMessages() {
-                var channelRangeMessages = [];
-
-                for(var i=startChannelNumber.value; i <= endChannelNumber.value; i++) {
-                    channelRangeMessages[i] = "/eos/user/<USER>/chan/" + i + "="
-                }
-                console.log(channelRangeMessages)
+                // Format: Command String, then start number, then end number.
+                var channelRangeMessages = [
+                        "/eos/user/0/newcmd/Chan/%1/Thru/%2/At/%3/Thru/%4#=",
+                        startChannelNumber.value,
+                        endChannelNumber.value
+                    ]
                 var messages = {
                     "on": "",
                     "off": "",
