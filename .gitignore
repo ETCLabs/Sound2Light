@@ -32,5 +32,26 @@ Makefile*
 #QtCtreator Qml
 *.qmlproject.user
 *.qmlproject.user.*
-
 .DS_Store
+
+*.vsp
+*.obj
+*.exe
+*.ilk
+*.pdb
+Debug\*
+Release\*
+*.psess
+*.tlog
+*.log
+src/debug/*
+src/release/*
+
+*.qm
+*.sln
+*.vspx
+*.VC.db
+*.vcxproj*
+*.suo
+.vs/*
+x64/*

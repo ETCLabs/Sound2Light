@@ -50,7 +50,6 @@ void BPMOscControler::save(QSettings& settings) {
 }
 
 
-inline int round(float value) { return (fmod(value,1.0) < 0.5) ? value : value + 1; }
 
 // Called by the bpm detector to make the controller send the new bpm to the clients
 void BPMOscControler::transmitBPM(float bpm)
@@ -63,18 +62,18 @@ void BPMOscControler::transmitBPM(float bpm)
             continue;
         }
         QString message(command);
-        message.replace("<BPM>", QString::number(round(bpm)));
-        message.replace("<BPM1>", QString::number(round(bpm)));
-        message.replace("<BPM1-2>", QString::number(round(bpm*0.5)));
-        message.replace("<BPM1-4>", QString::number(round(bpm*0.25)));
-        message.replace("<BPM1-8>", QString::number(round(bpm*0.125)));
-        message.replace("<BPM1-16>", QString::number(round(bpm*0.0625)));
-        message.replace("<BPM1-32>", QString::number(round(bpm*0.03125)));
-        message.replace("<BPM2>", QString::number(round(bpm*2)));
-        message.replace("<BPM4>", QString::number(round(bpm*4)));
-        message.replace("<BPM8>", QString::number(round(bpm*8)));
-        message.replace("<BPM16>", QString::number(round(bpm*16)));
-        message.replace("<BPM32>", QString::number(round(bpm*32)));
+        message.replace("<BPM>", QString::number(qRound(bpm)));
+        message.replace("<BPM1>", QString::number(qRound(bpm)));
+        message.replace("<BPM1-2>", QString::number(qRound(bpm*0.5)));
+        message.replace("<BPM1-4>", QString::number(qRound(bpm*0.25)));
+        message.replace("<BPM1-8>", QString::number(qRound(bpm*0.125)));
+        message.replace("<BPM1-16>", QString::number(qRound(bpm*0.0625)));
+        message.replace("<BPM1-32>", QString::number(qRound(bpm*0.03125)));
+        message.replace("<BPM2>", QString::number(qRound(bpm*2)));
+        message.replace("<BPM4>", QString::number(qRound(bpm*4)));
+        message.replace("<BPM8>", QString::number(qRound(bpm*8)));
+        message.replace("<BPM16>", QString::number(qRound(bpm*16)));
+        message.replace("<BPM32>", QString::number(qRound(bpm*32)));
         m_osc.sendMessage(message);
     }
 

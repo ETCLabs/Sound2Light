@@ -44,13 +44,13 @@ TriggerGenerator::TriggerGenerator(QString name, OSCNetworkManager* osc, bool is
 bool TriggerGenerator::checkForTrigger(ScaledSpectrum &spectrum, bool forceRelease)
 {
 	qreal value;
+
 	if (m_isBandpass) {
 		value = spectrum.getMaxLevel(m_midFreq, m_width);
 	} else {
 		value = spectrum.getMaxLevel();
 	}
-	if (m_invert) value = 1 - value;
-
+    if (m_invert) value = 1 - value;
 	// check for trigger:
     if ((!m_isActive && value >= m_threshold) && !forceRelease) {
 		// activate trigger:
@@ -61,10 +61,35 @@ bool TriggerGenerator::checkForTrigger(ScaledSpectrum &spectrum, bool forceRelea
 		m_isActive = false;
 		m_filter.triggerOff();
 	}
+    qreal diff = qAbs(m_lastValue - value);
+    // If a range message is set, we need to do some math.
+    if (m_rangeCount > 0 && diff > 0.001) {
+        // Divide into range based on threshold
+        int scaledValue = value * 100;  // number between 0 - 100
+        int perSection = scaledValue / m_rangeCount;
+        int numberToDisplay = m_groupingHash.value(scaledValue);
+        qDebug() << "OSC Range: " << m_oscParameters.getRangeMessage()[0] + " numberToDisplay " << numberToDisplay;
 
+
+        const int startChan = m_oscParameters.getRangeMessage()[1].toInt();
+        // Four Paramaters, Start channel, end channel, start value, end value
+        const QString cmd = m_oscParameters.getRangeMessage()[0] /*cmd*/
+                                + QString::number(startChan) // %1 is the
+                                + "," + QString::number(startChan + numberToDisplay)
+                                + ",01," + QString::number(numberToDisplay*perSection);
+        m_osc->sendMessage(cmd);
+
+        const QString zeroCmd = QString("/eos/user/0/newcmd/Chan/"
+                            + QString::number(startChan+ numberToDisplay + 1)
+                            + "/Thru/"
+                            + m_oscParameters.getRangeMessage()[2] /* endChan as string */
+                            + "/At/0#");
+        m_osc->sendMessage(zeroCmd);
+
+    }
 	// send level if levelMessage is set:
 	// and if difference to last value is greater than 0.001:
-	qreal diff = qAbs(m_lastValue - value);
+
 	if (diff > 0.001 && !m_oscParameters.getLevelMessage().isEmpty() && m_threshold > 0) {
 		qreal valueUnderThreshold = limit(0, (value / m_threshold), 1);
 		qreal minValue = m_oscParameters.getMinLevelValue();
@@ -76,6 +101,19 @@ bool TriggerGenerator::checkForTrigger(ScaledSpectrum &spectrum, bool forceRelea
 
 	m_lastValue = value;
     return m_isActive;
+}
+
+void TriggerGenerator::generateRangeHash(int grouping)
+{
+    const int endChan = m_oscParameters.getRangeMessage()[2].toInt();
+    const int startChan =  m_oscParameters.getRangeMessage()[1].toInt();
+    m_rangeCount = endChan - startChan;
+    qDebug() << "Generating Hash for: " << startChan << " - " << endChan;
+    const int groupSpacing = qFloor(100 / (m_rangeCount+1));
+    for(int i = 0; i <= 100; i++ ) {
+        const int group = qFloor(i / (groupSpacing+1));
+        m_groupingHash.insert(i, group);
+    }
 }
 
 void TriggerGenerator::save(QSettings& settings) const

@@ -48,7 +48,7 @@ Item {
 			DarkComboBox {
 				width: 100
 				height: 30
-				model: ["Channel", "Group", "Macro", "Submaster", "Bump Sub", "Cue", "Fader", "Custom", "--- Inactive"]
+				model: ["Channel", "Channel Range", "Group", "Macro", "Submaster", "Bump Sub", "Cue", "Fader", "Custom", "--- Inactive"]
 				onCurrentIndexChanged: updateSettingsArea()
 
 				Component.onCompleted: {
@@ -59,6 +59,7 @@ Item {
 					var currentMessage = triggerController.getOnMessage()
 					if (!currentMessage) currentMessage = triggerController.getOffMessage()
 					if (!currentMessage) currentMessage = triggerController.getLevelMessage()
+
 					currentMessage = currentMessage.toLowerCase()
 
 					// check which category fits the message:
@@ -76,7 +77,15 @@ Item {
 						currentIndex = model.indexOf("Cue")
 					} else if (currentMessage.indexOf("/fader/") !== -1) {
 						currentIndex = model.indexOf("Fader")
-					}
+                    }
+
+                    // Do this after everything else to avoid having our message match an above message
+                    if (!currentMessage) {
+                        currentMessage = triggerController.getRangeMessage()
+                        if(currentMessage) {
+                            currentIndex = model.indexOf("Channel Range")
+                        }
+                    }
 
 					// load correct Settings Component:
 					updateSettingsArea()
@@ -103,7 +112,9 @@ Item {
 						settingsArea.sourceComponent = eosFaderSettings
 					} else if (currentText === "Custom") {
 						settingsArea.sourceComponent = eosCustomSettings
-					} else if (currentText === "--- Inactive") {
+                    } else if (currentText === "Channel Range") {
+                        settingsArea.sourceComponent = eosChannelRangeSettings
+                    } else if (currentText === "--- Inactive") {
 						settingsArea.sourceComponent = eosInactiveSettings
 					}
 				}
@@ -241,6 +252,7 @@ Item {
 					"on": level ? "" : "/eos/user/<USER>/chan/" + channelNumber.value + "=" + channelOnValue.value,
 					"off": level ? "" : "/eos/user/<USER>/chan/" + channelNumber.value + "=" + channelOffValue.value,
 					"level": level ? "/eos/user/<USER>/chan/" + channelNumber.value + "=" : "",
+                    "range": "",
 					"levelMin": 0,
 					"levelMax": 100,
 					"shortText": "Channel " + channelNumber.value
@@ -249,6 +261,94 @@ Item {
 			}
 		}
 	}
+    // ------------------------------ Channel Range
+
+    Component {
+        id: eosChannelRangeSettings
+        Column {
+            anchors.fill: parent
+            spacing: 5
+            Row {
+                height: 30
+                width: parent.width
+                CenterLabel {
+                    height: parent.height
+                    width: parent.width * 0.5
+                    text: "Start Channel:"
+                }
+                NumericInput {
+                    id: startChannelNumber
+                    height: parent.height
+                    width: parent.width * 0.5
+                    value: 1
+                    minimumValue: 1
+                    maximumValue: 9999
+                }
+            }
+            Row {
+                height: 30
+                width: parent.width
+                CenterLabel {
+                    height: parent.height
+                    width: parent.width * 0.5
+                    text: "End Channel:"
+                }
+                NumericInput {
+                    id: endChannelNumber
+                    height: parent.height
+                    width: parent.width * 0.5
+                    value: 1
+                    minimumValue: 1
+                    maximumValue: 9999
+                }
+            }
+            Row {
+                height: 30
+                width: parent.width
+                CenterLabel {
+                    height: parent.height
+                    width: parent.width * 0.5
+                    text: "Mode:"
+                }
+                DarkComboBox {
+                    id: channelRangeMode
+                    height: parent.height
+                    width: parent.width * 0.5
+                    model: ["Level"]
+                }
+            }
+
+            function restoreFromMessages() {
+                 //restore values from current messages:
+                console.log(triggerController.getRangeMessage())
+                if (triggerController.getRangeMessage() !== "") {
+                    var messageArray = triggerController.getRangeMessage()
+                    startChannelNumber.value = Utils.lastPartAsInt(messageArray[0], 1)
+                    endChannelNumber.value = Utils.lastPartAsInt(messageArray[messageArray.length - 1], 1)
+                }
+            }
+
+
+            function getMessages() {
+                // Format: Command String, then start number, then end number.
+                var channelRangeMessages = [
+                        "/eos/user/0/newcmd/Chan/%1/Thru/%2/At/%3/Thru/%4#=",
+                        startChannelNumber.value,
+                        endChannelNumber.value
+                    ]
+                var messages = {
+                    "on": "",
+                    "off": "",
+                    "level": "",
+                    "range": channelRangeMessages,
+                    "levelMin": 0,
+                    "levelMax": 100,
+                    "shortText": "Channel Range "
+                }
+                return messages
+            }
+        }
+    }
 	// ------------------------------ Group
 	Component {
 		id: eosGroupSettings
@@ -345,6 +445,7 @@ Item {
 					"on": level ? "" : "/eos/user/<USER>/group/" + groupNumber.value + "=" + groupOnValue.value,
 					"off": level ? "" : "/eos/user/<USER>/group/" + groupNumber.value + "=" + groupOffValue.value,
 					"level": level ? "/eos/user/<USER>/group/" + groupNumber.value + "=" : "",
+                    "range": "",
 					"levelMin": 0,
 					"levelMax": 100,
 					"shortText": "Group " + groupNumber.value
@@ -426,6 +527,7 @@ Item {
 					"on": onMacroCheckbox.checked ? "/eos/user/<USER>/macro/fire=" + onMacroNumber.value : "",
 					"off": offMacroCheckbox.checked? "/eos/user/<USER>/macro/fire=" + offMacroNumber.value : "",
 					"level": "",
+                    "range": "",
 					"levelMin": 0,
 					"levelMax": 1,
 					"shortText": "Macro " + (onMacroCheckbox.checked ? onMacroNumber.value : offMacroNumber.value)
@@ -531,6 +633,7 @@ Item {
 					"on": level ? "" : "/eos/user/<USER>/sub/" + submasterNumber.value + "=" + (submasterOnValue.value / 100),
 					"off": level ? "" : "/eos/user/<USER>/sub/" + submasterNumber.value + "=" + (submasterOffValue.value / 100),
 					"level": level ? "/eos/user/<USER>/sub/" + submasterNumber.value + "=" : "",
+                    "range": "",
 					"levelMin": 0,
 					"levelMax": 1,
 					"shortText": "Sub " + submasterNumber.value
@@ -573,6 +676,7 @@ Item {
 					"on": "/eos/user/<USER>/sub/" + bumpSubNumber.value + "/fire=1.0",
 					"off": "/eos/user/<USER>/sub/" + bumpSubNumber.value + "/fire=0.0",
 					"level": "",
+                    "range": "",
 					"levelMin": 0,
 					"levelMax": 1,
 					"shortText": "Bump " + bumpSubNumber.value
@@ -706,6 +810,7 @@ Item {
 					"on": onCueCheckbox.checked ? "/eos/user/<USER>/cue/" + onCueList.value + "/" + onNumber + "/fire" : "",
 					"off": offCueCheckbox.checked ? "/eos/user/<USER>/cue/" + offCueList.value + "/" + offNumber + "/fire" : "",
 					"level": "",
+                    "range": "",
 					"levelMin": 0,
 					"levelMax": 1,
 					"shortText": "Cue " + (onCueCheckbox.checked ? onCueNumber.text : offCueNumber.text)
@@ -826,6 +931,7 @@ Item {
 					"on": level ? "" : "/eos/user/<USER>/fader/" + faderBank.value + "/" + faderNumber.value + "=" + (faderOnValue.value / 100),
 					"off": level ? "" : "/eos/user/<USER>/fader/" + faderBank.value + "/" + faderNumber.value + "=" + (faderOffValue.value / 100),
 					"level": level ? "/eos/user/<USER>/fader/" + faderBank.value + "/" + faderNumber.value + "=" : "",
+                    "range": "",
 					"levelMin": 0,
 					"levelMax": 1,
 					"shortText": "Fader " + faderBank.value + "/" + faderNumber.value
@@ -935,6 +1041,7 @@ Item {
 					"on": customOnMessage.text,
 					"off": customOffMessage.text,
 					"level": level,
+                    "range": "",
 					"levelMin": customLevelMinValue.value,
 					"levelMax": customLevelMaxValue.value,
 					"shortText": "Custom"
@@ -967,6 +1074,7 @@ Item {
 					"on": "",
 					"off": "",
 					"level": "",
+                    "range": "",
 					"levelMin": 0,
 					"levelMax": 1,
 					"shortText": ""
