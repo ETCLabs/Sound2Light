@@ -63,18 +63,21 @@ void BPMOscControler::transmitBPM(float bpm)
             continue;
         }
         QString message(command);
-        message.replace("<BPM>", QString::number(round(bpm)));
-        message.replace("<BPM1>", QString::number(round(bpm)));
-        message.replace("<BPM1-2>", QString::number(round(bpm*0.5)));
-        message.replace("<BPM1-4>", QString::number(round(bpm*0.25)));
-        message.replace("<BPM1-8>", QString::number(round(bpm*0.125)));
-        message.replace("<BPM1-16>", QString::number(round(bpm*0.0625)));
-        message.replace("<BPM1-32>", QString::number(round(bpm*0.03125)));
-        message.replace("<BPM2>", QString::number(round(bpm*2)));
-        message.replace("<BPM4>", QString::number(round(bpm*4)));
-        message.replace("<BPM8>", QString::number(round(bpm*8)));
-        message.replace("<BPM16>", QString::number(round(bpm*16)));
-        message.replace("<BPM32>", QString::number(round(bpm*32)));
+
+        //Every message is prefixed by a Zero because the EOS will interpret a single digit BPM incorrectly, e.g. "3" as "30"
+        //Sending "03" is correctly interpreted as "3"
+        message.replace("<BPM>", "0" + QString::number(round(bpm)));
+        message.replace("<BPM1>", "0" + QString::number(round(bpm)));
+        message.replace("<BPM1-2>", "0" + QString::number(round(bpm*0.5)));
+        message.replace("<BPM1-4>", "0" + QString::number(round(bpm*0.25)));
+        message.replace("<BPM1-8>", "0" + QString::number(round(bpm*0.125)));
+        message.replace("<BPM1-16>", "0" + QString::number(round(bpm*0.0625)));
+        message.replace("<BPM1-32>", "0" + QString::number(round(bpm*0.03125)));
+        message.replace("<BPM2>", "0" + QString::number(round(bpm*2)));
+        message.replace("<BPM4>", "0" + QString::number(round(bpm*4)));
+        message.replace("<BPM8>", "0" + QString::number(round(bpm*8)));
+        message.replace("<BPM16>", "0" + QString::number(round(bpm*16)));
+        message.replace("<BPM32>", "0" + QString::number(round(bpm*32)));
         m_osc.sendMessage(message);
     }
 

@@ -1,6 +1,12 @@
 
 # Sound2Light Change Log
 
+### Version 0.0.2.1.0.8 - 1 Mar 2017
+
+- Fixed BPM OSC Messages with a one digit value being interpreted falsely on EOS
+
+- Fixed Manualy entered BPMs not being saved in presets
+
 ### Version 0.0.2.1.0.7 - 14 Sep 2016
 
 - Fixed BPM OSC Messages not stopping when turning of OSC Output

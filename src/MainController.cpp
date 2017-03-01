@@ -471,6 +471,10 @@ void MainController::loadPreset(const QString &constFileName, bool createIfNotEx
     // Restore the settings in the BPMOscController
     m_bpmOSC.restore(settings);
 
+    // Restore the manual BPM
+    m_bpmTap.setBpm(settings.value("bpm/tapvalue", 60).toInt());
+
+
 	// this is now the loaded preset, update the preset name:
 	m_currentPresetFilename = fileName; emit presetNameChanged();
 	m_presetChangedButNotSaved = false; emit presetChangedButNotSavedChanged();
@@ -542,6 +546,9 @@ void MainController::savePresetAs(const QString &constFileName, bool isAutosave)
 
     // save the settings in the BPMOscController
     m_bpmOSC.save(settings);
+
+    // Restore the manual BPM
+    settings.setValue("bpm/tapvalue", m_bpmTap.getBpm());
 
 	if (!isAutosave) {
 		// this is now the loaded preset, update the preset name:
