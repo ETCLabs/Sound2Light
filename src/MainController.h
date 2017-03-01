@@ -130,6 +130,9 @@ signals:
     // emitted if the waveform visiblity changed
     void waveformVisibleChanged();
 
+    // emitted if the bpm mute changed
+    void bpmMuteChanged();
+
 	// forwarded from OSCNetworkManager:
 	void messageReceived(OSCMessage msg);
 	void packetSent();
@@ -245,6 +248,10 @@ public slots:
     void setMinBPM(int value);
     // gets the minium bpm of the range
     int getMinBPM() { return m_bpm.getMinBPM(); }
+
+    // set/get bpm mute
+    bool getBPMMute() { return m_bpmOSC.getBPMMute(); }
+    void toggleBPMMute() { m_bpmOSC.toggleBPMMute(); emit bpmMuteChanged(); }
 
     // set/get the waveform visibility
     bool getWaveformVisible() { return m_waveformVisible & m_bpmActive; }

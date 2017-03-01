@@ -9,5 +9,7 @@
         <file>images/maximize.png</file>
         <file>images/minimize.png</file>
         <file>images/edit.png</file>
+        <file>images/play.png</file>
+        <file>images/pause.png</file>
     </qresource>
 </RCC>

@@ -25,8 +25,9 @@
 #include <QDebug>
 #include <QTimer>
 
-TriggerFilter::TriggerFilter(OSCNetworkManager* osc, TriggerOscParameters& oscParameters)
+TriggerFilter::TriggerFilter(OSCNetworkManager* osc, TriggerOscParameters& oscParameters, bool mute)
 	: QObject(0)
+    , m_mute(mute)
 	, m_onDelay(0.0)
 	, m_offDelay(0.0)
 	, m_maxHold(0.0)
@@ -75,14 +76,14 @@ void TriggerFilter::triggerOff()
 void TriggerFilter::sendOnSignal()
 {
 	QString message = m_oscParameters.getOnMessage();
-	if (!message.isEmpty())	m_osc->sendMessage(message);
+    if (!message.isEmpty() && !m_mute)	m_osc->sendMessage(message);
 	emit onSignalSent();
 }
 
 void TriggerFilter::sendOffSignal()
 {
 	QString message = m_oscParameters.getOffMessage();
-	if (!message.isEmpty()) m_osc->sendMessage(message);
+    if (!message.isEmpty() && !m_mute) m_osc->sendMessage(message);
 	emit offSignalSent();
 }
 

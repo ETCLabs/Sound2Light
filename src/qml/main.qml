@@ -84,14 +84,14 @@ ApplicationWindow {
 		SpectrumWithControls {
             id: spectrumWithControls
 			Layout.fillHeight: true
-            Layout.minimumHeight: minimalMode ? 200 : 260
+            Layout.minimumHeight: minimalMode ? 200 : 300
 		}
 
 		// -------------------------- Bottom Area with Trigger Settings ---------------------------
 		TriggerSettingsArea {
 			id: triggerSettingsArea
             visible: minimalMode ? false : true
-            Layout.minimumHeight: minimalMode ? 0 : detailsVisible ? 370 : 250
+            Layout.minimumHeight: minimalMode ? 0 : detailsVisible ? 390 : 280
             height: minimalMode ? 0 : 400
 		}
 

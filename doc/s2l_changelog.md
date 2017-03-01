@@ -1,6 +1,10 @@
 
 # Sound2Light Change Log
 
+### Version 0.0.2.1.0.9 - 1 Mar 2017
+
+- Supports Muting the OSC output of individual channels
+
 ### Version 0.0.2.1.0.8 - 1 Mar 2017
 
 - Fixed BPM OSC Messages with a one digit value being interpreted falsely on EOS

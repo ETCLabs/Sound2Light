@@ -79,7 +79,7 @@ Column {
 
 	Item {  // spacer
 		width: parent.width
-        height: parent.height - details.height - 30*6
+        height: parent.height - details.height - 30*7
 	}
 
 	// ----------------------- Show / Hide Details Button -----------------
@@ -95,7 +95,7 @@ Column {
 		id: details
 		visible: detailsVisible
 		width: parent.width
-		height: detailsVisible ? 30*6 : 0  // 6 labels with 30px height each
+        height: detailsVisible ? 30*6 : 0  // 6 labels with 30px height each
 		CenterLabel {
 			text: "Frequency"
 		}
@@ -113,6 +113,9 @@ Column {
 		}
 		CenterLabel {
 			text: "OSC Message"
-		}
+        }
 	}
+    CenterLabel {
+        text: "OSC Mute"
+    }
 }

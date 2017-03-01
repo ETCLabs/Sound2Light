@@ -58,11 +58,17 @@ signals:
 	void oscLabelTextChanged();
 	// emitted when a value of the preset changed
 	void presetChanged();
+    // emmited when mute changes
+    void muteChanged();
 
 public slots:
 
 	// forward calls to TriggerGenerator
 	// see TriggerGenerator.h for documentation
+
+    bool getMute() const { return m_trigger->getMute(); }
+    void toggleMute() { m_trigger->toggleMute(); emit muteChanged(); }
+    void setMute(bool mute) { m_trigger->setMute(mute); emit muteChanged(); }
 
 	int getMidFreq() const { return m_trigger->getMidFreq(); }
 	void setMidFreq(const int& value) { m_trigger->setMidFreq(value); emit parameterChanged(); emit presetChanged(); }

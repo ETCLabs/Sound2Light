@@ -88,7 +88,7 @@ Item {
 		SliderWithIndicator {
 			id: thresholdSlider
 			width: parent.width
-			height: parent.height - 40 - details.height
+            height: parent.height - 40 - details.height - muteButton.height
 			value: triggerController.threshold
 			onValueChanged: if (triggerController.threshold !== value) triggerController.threshold = value
 
@@ -101,7 +101,7 @@ Item {
 			id: details
 			visible: detailsVisible
 			width: parent.width
-			height: detailsVisible ? 30*6 : 0
+            height: detailsVisible ? 30*6 : 0
 
 			Column {  // ------------------ Frequency and Width - only visible if this is a Bandpass ---------
 				width: parent.width
@@ -176,7 +176,44 @@ Item {
 				height: 30
 				text: (triggerController.oscLabelText !== "") ? triggerController.oscLabelText : "---"
 				onClicked: controller.openDialog("qrc:/qml/OscMessageDialog.qml", "triggerController", root.triggerController)
-			}
+            }
 		}  // details Column
+
+        // ------------------------------- Mute ---------------------------
+        DarkButton {
+            id: muteButton
+            width: parent.width
+            height: 30
+            text: ""
+            highlighted: true
+            highlightColor: triggerController.getMute() ? "#FF6633" : "lightgreen"
+            Image {
+                id: playimage
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: height
+                source: "qrc:/images/play.png"
+                visible: triggerController.getMute()
+            }
+            Image {
+                id: pauseimage
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: height
+                source: "qrc:/images/pause.png"
+                visible: !triggerController.getMute()
+            }
+            Connections {
+                target: triggerController
+                onMuteChanged: {
+                    muteButton.highlightColor = triggerController.getMute() ? "#FF6633" : "lightgreen"
+                    playimage.visible = triggerController.getMute()
+                    pauseimage.visible = !triggerController.getMute()
+                }
+            }
+            onClicked: triggerController.toggleMute()
+        }
 	}  // Column
 }

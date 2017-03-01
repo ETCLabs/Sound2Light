@@ -30,15 +30,32 @@ TriggerGenerator::TriggerGenerator(QString name, OSCNetworkManager* osc, bool is
 	, m_name(name)
     , m_osc(osc)
 	, m_invert(invert)
+    , m_mute(false)
 	, m_midFreq(midFreq)
 	, m_defaultMidFreq(midFreq)
 	, m_width(0.1)
 	, m_threshold(0.5)
 	, m_isActive(false)
 	, m_oscParameters()
-	, m_filter(osc, m_oscParameters)
+    , m_filter(osc, m_oscParameters, m_mute)
 {
 	resetParameters();
+}
+
+// toggles mute on and off
+void TriggerGenerator::toggleMute()
+{
+    m_mute = !m_mute;
+    m_filter.setMute(m_mute);
+    m_osc->sendMessage("/s2l/out/" + m_name + "/mute", (m_mute ? "1" : "0"), true);
+}
+
+// toggles mute on and off
+void TriggerGenerator::setMute(bool mute)
+{
+    m_mute = mute;
+    m_filter.setMute(m_mute);
+    m_osc->sendMessage("/s2l/out/" + m_name + "/mute", (m_mute ? "1" : "0"), true);
 }
 
 bool TriggerGenerator::checkForTrigger(ScaledSpectrum &spectrum, bool forceRelease)
@@ -51,7 +68,7 @@ bool TriggerGenerator::checkForTrigger(ScaledSpectrum &spectrum, bool forceRelea
 	}
 	if (m_invert) value = 1 - value;
 
-	// check for trigger:
+    // check for trigger:
     if ((!m_isActive && value >= m_threshold) && !forceRelease) {
 		// activate trigger:
 		m_isActive = true;
@@ -60,19 +77,19 @@ bool TriggerGenerator::checkForTrigger(ScaledSpectrum &spectrum, bool forceRelea
 		// release trigger:
 		m_isActive = false;
 		m_filter.triggerOff();
-	}
+    }
 
-	// send level if levelMessage is set:
+    // send level if levelMessage is set and band is not muted:
 	// and if difference to last value is greater than 0.001:
-	qreal diff = qAbs(m_lastValue - value);
-	if (diff > 0.001 && !m_oscParameters.getLevelMessage().isEmpty() && m_threshold > 0) {
-		qreal valueUnderThreshold = limit(0, (value / m_threshold), 1);
-		qreal minValue = m_oscParameters.getMinLevelValue();
-		qreal maxValue = m_oscParameters.getMaxLevelValue();
-		qreal scaledValue = minValue + valueUnderThreshold * (maxValue - minValue);
-		QString oscMessage = m_oscParameters.getLevelMessage() + QString::number(scaledValue, 'f', 3);
-		m_osc->sendMessage(oscMessage);
-	}
+    qreal diff = qAbs(m_lastValue - value);
+    if (diff > 0.001 && !m_oscParameters.getLevelMessage().isEmpty() && m_threshold > 0 && !m_mute) {
+        qreal valueUnderThreshold = limit(0, (value / m_threshold), 1);
+        qreal minValue = m_oscParameters.getMinLevelValue();
+        qreal maxValue = m_oscParameters.getMaxLevelValue();
+        qreal scaledValue = minValue + valueUnderThreshold * (maxValue - minValue);
+        QString oscMessage = m_oscParameters.getLevelMessage() + QString::number(scaledValue, 'f', 3);
+        m_osc->sendMessage(oscMessage);
+    }
 
 	m_lastValue = value;
     return m_isActive;
@@ -80,7 +97,8 @@ bool TriggerGenerator::checkForTrigger(ScaledSpectrum &spectrum, bool forceRelea
 
 void TriggerGenerator::save(QSettings& settings) const
 {
-	settings.setValue(m_name + "/threshold", m_threshold);
+    settings.setValue(m_name + "/mute", m_mute);
+    settings.setValue(m_name + "/threshold", m_threshold);
 	settings.setValue(m_name + "/midFreq", m_midFreq);
 	settings.setValue(m_name + "/width", m_width);
 	m_filter.save(m_name, settings);
@@ -89,17 +107,19 @@ void TriggerGenerator::save(QSettings& settings) const
 
 void TriggerGenerator::restore(QSettings& settings)
 {
+    m_mute = settings.value(m_name + "/mute", false).toBool();
 	setThreshold(settings.value(m_name + "/threshold").toReal());
 	setMidFreq(settings.value(m_name + "/midFreq").toReal());
 	setWidth(settings.value(m_name + "/width").toReal());
 	m_filter.restore(m_name, settings);
-	m_oscParameters.restore(m_name, settings);
+    m_oscParameters.restore(m_name, settings);
 }
 
 void TriggerGenerator::resetParameters()
 {
-	setMidFreq(m_defaultMidFreq);
+    setMidFreq(m_defaultMidFreq);
 	setWidth(0.1);
+    m_mute = false;
 	if (m_isBandpass) {
 		setThreshold(0.5);
 		// default Bandpass settings:

@@ -21,9 +21,23 @@
 #include "BPMOscControler.h"
 
 BPMOscControler::BPMOscControler(OSCNetworkManager &osc) :
-    m_osc(osc)
+    m_bpmMute(false)
+  , m_osc(osc)
   , m_oscCommands()
 {
+}
+
+void BPMOscControler::setBPMMute(bool mute)
+{
+    m_bpmMute = mute;
+
+    m_osc.sendMessage("/s2l/out/bpm/mute", (m_bpmMute ? "1" : "0"), true);
+}
+
+void BPMOscControler::toggleBPMMute()
+{
+    m_bpmMute = !m_bpmMute;
+    m_osc.sendMessage("/s2l/out/bpm/mute", (m_bpmMute ? "1" : "0"), true);
 }
 
 // Restore the commands from e.g. a preset or whatever else
@@ -55,6 +69,9 @@ inline int round(float value) { return (fmod(value,1.0) < 0.5) ? value : value +
 // Called by the bpm detector to make the controller send the new bpm to the clients
 void BPMOscControler::transmitBPM(float bpm)
 {
+    // Don't transmit if mute is engaged
+    if (m_bpmMute) return;
+
     // Send user specified commands
 
     for (QString& command : m_oscCommands) {

@@ -41,7 +41,9 @@ class TriggerFilter : public QObject
 	Q_OBJECT
 
 public:
-	explicit TriggerFilter(OSCNetworkManager* osc, TriggerOscParameters& oscParameters);
+    explicit TriggerFilter(OSCNetworkManager* osc, TriggerOscParameters& oscParameters, bool mute);
+
+    void setMute(bool mute) { m_mute = mute; }
 
 	// returns the on delay time in seconds
 	qreal getOnDelay() const { return m_onDelay; }
@@ -105,6 +107,7 @@ public slots:
 	void onMaxHoldEnd();
 
 protected:
+    bool        m_mute; // Wether the associated band is muted
 	qreal		m_onDelay;  // On delay in seconds
 	qreal		m_offDelay;  // Off delay in seconds
 	qreal		m_maxHold;  // max hold time (decay) in seconds

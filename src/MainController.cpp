@@ -474,6 +474,8 @@ void MainController::loadPreset(const QString &constFileName, bool createIfNotEx
     // Restore the manual BPM
     m_bpmTap.setBpm(settings.value("bpm/tapvalue", 60).toInt());
 
+    m_bpmOSC.setBPMMute(settings.value("bpm/mute", false).toBool());
+
 
 	// this is now the loaded preset, update the preset name:
 	m_currentPresetFilename = fileName; emit presetNameChanged();
@@ -491,6 +493,7 @@ void MainController::loadPreset(const QString &constFileName, bool createIfNotEx
     emit bpmActiveChanged();
     emit bpmRangeChanged();
     emit waveformVisibleChanged();
+    emit bpmMuteChanged();
 
 	emit m_bassController->parameterChanged();
 	emit m_loMidController->parameterChanged();
@@ -505,6 +508,13 @@ void MainController::loadPreset(const QString &constFileName, bool createIfNotEx
 	emit m_highController->oscLabelTextChanged();
 	emit m_envelopeController->oscLabelTextChanged();
 	emit m_silenceController->oscLabelTextChanged();
+
+    emit m_bassController->muteChanged();
+    emit m_loMidController->muteChanged();
+    emit m_hiMidController->muteChanged();
+    emit m_highController->muteChanged();
+    emit m_envelopeController->muteChanged();
+    emit m_silenceController->muteChanged();
 }
 
 void MainController::savePresetAs(const QString &constFileName, bool isAutosave)
@@ -547,8 +557,11 @@ void MainController::savePresetAs(const QString &constFileName, bool isAutosave)
     // save the settings in the BPMOscController
     m_bpmOSC.save(settings);
 
-    // Restore the manual BPM
+    // save the manual BPM
     settings.setValue("bpm/tapvalue", m_bpmTap.getBpm());
+
+    // save bpm mute
+    settings.setValue("bpm/mute", m_bpmOSC.getBPMMute());
 
 	if (!isAutosave) {
 		// this is now the loaded preset, update the preset name:

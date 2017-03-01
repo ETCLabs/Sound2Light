@@ -29,6 +29,11 @@ class BPMOscControler
 public:
     BPMOscControler(OSCNetworkManager& osc);
 
+    // Getter/Setter for mute
+    bool getBPMMute() { return m_bpmMute; }
+    void setBPMMute(bool mute);
+    void toggleBPMMute();
+
     // Called by the bpm detector to make the controller send the new bpm to the clients
     void transmitBPM(float bpm);
 
@@ -49,6 +54,7 @@ public:
 
 
 protected:
+    bool                m_bpmMute; // If the bpm osc is muted
     OSCNetworkManager&  m_osc; // The network manager to send network signals thorugh
     QStringList         m_oscCommands; // The osc messages to be sent on a tempo changed. Delivered as finished strings with the <BPM> (<BPM1-2>, <BPM4> etc. for fractions from 1/4 to 4) qualifier to be changed. The message is generated in the qml because thats the way tim did it with the other osc messages
 };

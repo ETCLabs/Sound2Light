@@ -82,6 +82,20 @@ void OSCMapping::handleMessage(OSCMessage msg)
         if (msg.arguments().size() == 0 || msg.arguments().at(0).toBool()) {
             m_controller->triggerBeat();
         }
+    } else if (msg.pathStartsWith("/s2l/bpm/mute")) {
+        m_controller->toggleBPMMute();
+    } else if (msg.pathStartsWith("/s2l/bass/mute")) {
+        m_controller->m_bassController->toggleMute();
+    } else if (msg.pathStartsWith("/s2l/lo_mid/mute")) {
+        m_controller->m_loMidController->toggleMute();
+    } else if (msg.pathStartsWith("/s2l/hi_mid/mute")) {
+        m_controller->m_hiMidController->toggleMute();
+    } else if (msg.pathStartsWith("/s2l/high/mute")) {
+        m_controller->m_highController->toggleMute();
+    } else if (msg.pathStartsWith("/s2l/level/mute")) {
+        m_controller->m_envelopeController->toggleMute();
+    } else if (msg.pathStartsWith("/s2l/silence/mute")) {
+        m_controller->m_silenceController->toggleMute();
     }
 }
 

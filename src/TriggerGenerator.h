@@ -50,6 +50,16 @@ public:
 
 	// ---------------- Parameters -------------
 
+    // returns wether the frequency band is muted
+    bool getMute() const { return m_mute; }
+
+    // toggles mute on and off
+    void toggleMute();
+
+    // toggles mute on and off
+    void setMute(bool mute);
+
+
 	// returns the middle frequency of the frequency band [20...22050]
 	int getMidFreq() const { return m_midFreq; }
 
@@ -97,9 +107,10 @@ public:
 	void resetParameters();
 
 protected:
-	const QString	m_name;  // name of the Trigger (used for save, restore and UI)
+    const QString	m_name;  // name of the Trigger (used for save, restore and UI)
     OSCNetworkManager*	m_osc;  // pointer to OSCNetworkManager instance (i.e. of MainController)
 	const bool		m_invert;  // true if signal values should be inverted (i.e. for "silence" trigger)
+    bool            m_mute; // true if the band is muted, which will supress OSC Output
 	int				m_midFreq;  // middle frequency of bandpass in Hz
 	const int		m_defaultMidFreq;  // default midFreq in Hz, used for reset
 	qreal			m_width;  // width of bandpass [0...1]

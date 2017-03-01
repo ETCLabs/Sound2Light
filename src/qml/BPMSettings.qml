@@ -260,11 +260,49 @@ Item {
             text: "BPM Target"
             onClicked: controller.openDialog("qrc:/qml/BPMOscMessageDialog.qml")
         }
+        // ------------------------------- Mute ---------------------------
+        DarkButton {
+            id: muteButton
+            visible: !minimalMode
+            x: 10
+            width: parent.width - 2*x
+            height: 30
+            text: ""
+            highlighted: true
+            highlightColor: controller.getBPMMute() ? "#FF6633" : "lightgreen"
+            Image {
+                id: playimage
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: height
+                source: "qrc:/images/play.png"
+                visible: controller.getBPMMute()
+            }
+            Image {
+                id: pauseimage
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: height
+                source: "qrc:/images/pause.png"
+                visible: !controller.getBPMMute()
+            }
+            Connections {
+                target: controller
+                onBpmMuteChanged: {
+                    muteButton.highlightColor = controller.getBPMMute() ? "#FF6633" : "lightgreen"
+                    playimage.visible = controller.getBPMMute()
+                    pauseimage.visible = !controller.getBPMMute()
+                }
+            }
+            onClicked: controller.toggleBPMMute()
+        }
 
         // --------------------------- Spacer -----------------------------
         Item {
             width: parent.width
-            height: parent.height - bpmLabelItem.height - activationRow.height - rangePicker.height - (minimalMode ? 0 : waveformVisibleCheckbox.height + oscSettingsButton.height) - minimalModeButton.height - 10
+            height: parent.height - bpmLabelItem.height - activationRow.height - rangePicker.height - (minimalMode ? 0 : waveformVisibleCheckbox.height + oscSettingsButton.height + muteButton.height) - minimalModeButton.height - 10
         }
 
         // ----------------------- Minimal Mode Button --------------------
