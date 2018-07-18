@@ -55,7 +55,7 @@ Dialog {
                 height: parent.height - 30
                 Component.onCompleted: updateConsoleType()
 
-                // sets the right conent for this loader based on the chosen console type
+                // sets the right component for this loader based on the chosen console type
                 // - called when Component is complete and when "visible" of dialog changes
                 function updateConsoleType() {
                     var consoleType = controller.getConsoleType();

@@ -201,7 +201,7 @@ Dialog {
 				}
 
 				DarkComboBox {
-					property var consoleTypes: ["Eos", "Cobalt 7.2", "Cobalt 7.3+", "ColorSource"]
+					property var consoleTypes: ["Eos", "Cobalt 7.2", "Cobalt 7.3+", "ColorSource", "Hog 4"]
 					width: parent.width  * 0.5
 					height: parent.height
 					model: consoleTypes

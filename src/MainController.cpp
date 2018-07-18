@@ -43,7 +43,7 @@ MainController::MainController(QQmlApplicationEngine* qmlEngine, QObject *parent
 	, m_audioInput(0)
 	, m_fft(m_buffer, m_triggerContainer)
 	, m_osc()
-	, m_consoleType("EOS")
+	, m_consoleType("Eos")
 	, m_oscMapping(this)
     , m_lowSoloMode(false)
     , m_bpmOSC(m_osc)

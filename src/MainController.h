@@ -375,7 +375,7 @@ protected:
 	AudioInputInterface*		m_audioInput;  // pointer to AudioInputInterface implementation
 	FFTAnalyzer					m_fft;  // FFTAnalyzer instance
 	OSCNetworkManager			m_osc;  // OSCNetworkManager instance
-	QString						m_consoleType;  // console type as string ("EOS" or "Cobalt")
+	QString						m_consoleType;  // console type as string
 	QTimer						m_fftUpdateTimer;  // Timer used to trigger FFT update
 	QString						m_currentPresetFilename;  // file path and name of active preset
 	bool						m_presetChangedButNotSaved;  // true, if the preset has been changed but not saved yet
