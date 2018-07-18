@@ -45,16 +45,17 @@ void FFTAnalyzer::calculateWindow()
 {
 	// Hann Window function
 	// used to prepare the PCM data for FFT
-	for (int i=0; i<NUM_SAMPLES; ++i) {
-		m_window[i] = 0.5f * (1 - qCos((2 * M_PI * i) / (NUM_SAMPLES - 1)));
+    for (int i=0; i<NUM_SAMPLES; ++i) {
+        m_window[i] = 0.5f * (1 - qCos((2 * M_PI * i) / (NUM_SAMPLES - 1)));
 	}
 }
 
 void FFTAnalyzer::calculateFFT(bool lowSoloMode)
 {
 	// apply window:
-	for (int i=0; i < NUM_SAMPLES; ++i) {
-		m_buffer[i] = m_inputBuffer.at(i) * m_window[i];
+    int bufferOffset = m_inputBuffer.getCapacity() - NUM_SAMPLES;
+    for (int i=0; i < NUM_SAMPLES; ++i) {
+        m_buffer[i] = m_inputBuffer.at(i + bufferOffset) * m_window[i];
 	}
 
 	// apply FFT:
