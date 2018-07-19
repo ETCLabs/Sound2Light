@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "BpmTapDetector.h"
+#include "BPMTapDetector.h"
 
 BPMTapDetector::BPMTapDetector(BPMOscControler *osc) :
       m_bpm(0)
