@@ -53,8 +53,9 @@ void FFTAnalyzer::calculateWindow()
 void FFTAnalyzer::calculateFFT(bool lowSoloMode)
 {
 	// apply window:
+	int bufferOffset = m_inputBuffer.getCapacity() - NUM_SAMPLES;
 	for (int i=0; i < NUM_SAMPLES; ++i) {
-		m_buffer[i] = m_inputBuffer.at(i) * m_window[i];
+		m_buffer[i] = m_inputBuffer.at(i + bufferOffset) * m_window[i];
 	}
 
 	// apply FFT:
