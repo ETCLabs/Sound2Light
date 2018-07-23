@@ -29,25 +29,8 @@
 #include <QSplashScreen>
 
 
-int main(int argc, char *argv[])
-{
-	// set GUI scaling factor for high DPI displays:
-	// create dummy QApplication to access logicalDotsPerInch():
-	QApplication* unusedApp = new QApplication(argc, argv);
-	qunsetenv("QT_DEVICE_PIXEL_RATIO");
-	qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "0");
-	qreal standardDpi = 96;
-#ifdef Q_OS_MAC
-	standardDpi = 72;
-#endif
-	qreal scaleFactor = QApplication::primaryScreen()->logicalDotsPerInch() / standardDpi;
-	scaleFactor = qMax(1.0, scaleFactor);
-	qputenv("QT_SCREEN_SCALE_FACTORS", QString::number(scaleFactor, 'g', 2).toUtf8());
-	qDebug() << "Screen Scale Factor: " << scaleFactor;
-	// destroy dummy app because scale factor will only take effect with new app:
-	delete unusedApp;
-    unusedApp = 0;
-
+int main(int argc, char *argv[]) {
+	QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 	QApplication app(argc, argv);
 	// set app icon:
 	app.setWindowIcon(QIcon(":/images/icons/etcicon.ico"));
