@@ -71,6 +71,8 @@ Dialog {
 						sourceUrl = "qrc:/qml/OscMessagesCobaltOldArea.qml"
 					} else if (consoleType === "ColorSource") {
 						sourceUrl = "qrc:/qml/OscMessagesColorSourceArea.qml"
+					} else if (consoleType === "Hog 4") {
+						sourceUrl = "qrc:/qml/OscMessagesHog4Area.qml"
 					}
 					if (sourceUrl !== source) {
 						source = sourceUrl

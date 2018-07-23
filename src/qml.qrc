@@ -41,5 +41,6 @@
         <file>qml/BPMOscMessagesOtherArea.qml</file>
         <file>qml/BPMOscMessagesCobaltArea.qml</file>
         <file>qml/BPMOscMessagesCobaltOldArea.qml</file>
+        <file>qml/OscMessagesHog4Area.qml</file>
     </qresource>
 </RCC>

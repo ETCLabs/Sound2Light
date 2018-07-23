@@ -5,7 +5,7 @@ TEMPLATE = app
 
 QT += qml quick multimedia quickwidgets network widgets
 
-CONFIG += c++98 thread
+CONFIG += c++11 thread
 
 QMAKE_CXXFLAGS += -Wall
 
