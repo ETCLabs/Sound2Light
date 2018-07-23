@@ -1,6 +1,12 @@
 
 # Sound2Light Change Log
 
+### Version 0.0.3.1.0.1 - 23 Mar 2018
+
+- Added Hog 4 OSC commands (Fader, Cue List, Scene and Macro)
+
+- Fix latency issue (reduced latency from >300ms to 80ms)
+
 ### Version 0.0.2.1.0.9 - 1 Mar 2017
 
 - Supports Muting the OSC output of individual channels
