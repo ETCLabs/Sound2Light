@@ -57,7 +57,7 @@ class TriggerGuiController;
 class EnvelopeTriggerGuiController;
 
 
-// Processing chain in this software:
+// Processing chains in this software:
 // 1. Chain:  AudioInput (async) -> MonoAudioBuffer
 // 2. Chain:  QTimer(44Hz) -> FFTAnalyzer -> TriggerGenerator -> TriggerFilter -> OSCNetworkManager
 
@@ -80,7 +80,7 @@ class MainController : public QObject
     Q_PROPERTY(bool lowSoloMode READ getLowSoloMode WRITE setLowSoloMode NOTIFY lowSoloModeChanged)
 
 public:
-	explicit MainController(QQmlApplicationEngine* m_qmlEngine, QObject *parent = 0);
+    explicit MainController(QQmlApplicationEngine* m_qmlEngine, QObject* parent = nullptr);
 	~MainController();
 
 	// initializes everything that has to be done before QML is loaded

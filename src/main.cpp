@@ -31,9 +31,9 @@
 
 int main(int argc, char *argv[]) {
 	QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-	QApplication app(argc, argv);
-	// set app icon:
+    QApplication app(argc, argv);
 	app.setWindowIcon(QIcon(":/images/icons/etcicon.ico"));
+
 	// these parameters are used by QSettings:
 	QCoreApplication::setOrganizationName("ETC");
 	QCoreApplication::setApplicationName("Sound2Light");
@@ -51,19 +51,19 @@ int main(int argc, char *argv[]) {
 
 	// create QmlEngine and MainController:
 	QQmlApplicationEngine engine;
-	MainController controller(&engine);
+    MainController* controller = new MainController(&engine);
 
 	// set global QML variable "controller" to a pointer to the MainController:
-	engine.rootContext()->setContextProperty("controller", &controller);
+    engine.rootContext()->setContextProperty("controller", controller);
+
 	// quit QGuiApplication when quit signal is emitted:
 	QObject::connect(&engine, SIGNAL(quit()), &app, SLOT(quit()));
 	// call onExit() method of controller when app is about to quit:
-	QObject::connect(&app, SIGNAL(aboutToQuit()), &controller, SLOT(onExit()));
+    QObject::connect(&app, SIGNAL(aboutToQuit()), controller, SLOT(onExit()));
 
-	controller.initBeforeQmlIsLoaded();
-	// actually load QML file:
+    controller->initBeforeQmlIsLoaded();
 	engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
-	controller.initAfterQmlIsLoaded();
+    controller->initAfterQmlIsLoaded();
 
 	// ---------- Hide Splash Screen ---------
 	splash.hide();

@@ -40,7 +40,7 @@ MainController::MainController(QQmlApplicationEngine* qmlEngine, QObject *parent
 	: QObject(parent)
 	, m_qmlEngine(qmlEngine)
     , m_buffer(NUM_SAMPLES*4) // more buffer so the bpm detector can get overlaping data
-	, m_audioInput(0)
+    , m_audioInput(nullptr)
 	, m_fft(m_buffer, m_triggerContainer)
 	, m_osc()
 	, m_consoleType("Eos")
@@ -61,21 +61,21 @@ MainController::MainController(QQmlApplicationEngine* qmlEngine, QObject *parent
 MainController::~MainController()
 {
 	// delete all objects created on Heap:
-	delete m_audioInput; m_audioInput = 0;
+    delete m_audioInput; m_audioInput = nullptr;
 
-	delete m_bass; m_bass = 0;
-	delete m_loMid; m_loMid = 0;
-	delete m_hiMid; m_hiMid = 0;
-	delete m_high; m_high = 0;
-	delete m_envelope; m_envelope = 0;
-	delete m_silence; m_silence = 0;
+    delete m_bass; m_bass = nullptr;
+    delete m_loMid; m_loMid = nullptr;
+    delete m_hiMid; m_hiMid = nullptr;
+    delete m_high; m_high = nullptr;
+    delete m_envelope; m_envelope = nullptr;
+    delete m_silence; m_silence = nullptr;
 
-	delete m_bassController; m_bassController = 0;
-	delete m_loMidController; m_loMidController = 0;
-	delete m_hiMidController; m_hiMidController = 0;
-	delete m_highController; m_highController = 0;
-	delete m_envelopeController; m_envelopeController = 0;
-	delete m_silenceController; m_silenceController = 0;
+    delete m_bassController; m_bassController = nullptr;
+    delete m_loMidController; m_loMidController = nullptr;
+    delete m_hiMidController; m_hiMidController = nullptr;
+    delete m_highController; m_highController = nullptr;
+    delete m_envelopeController; m_envelopeController = nullptr;
+    delete m_silenceController; m_silenceController = nullptr;
 }
 
 void MainController::initBeforeQmlIsLoaded()
@@ -372,7 +372,13 @@ void MainController::savePresetIndependentSettings() const
 	independentSettings.setValue("oscIsEnabled", getOscEnabled());
 	independentSettings.setValue("oscUseTcp", getUseTcp());
 	independentSettings.setValue("oscUse_1_1", getUseOsc_1_1());
-	independentSettings.setValue("windowGeometry", getMainWindow()->geometry());
+    QRect windowGeometry = getMainWindow()->geometry();
+    if (windowGeometry.width() < 300) {
+        // -> minimal mode, save default geometry
+        windowGeometry.setWidth(1200);
+        windowGeometry.setHeight(800);
+    }
+    independentSettings.setValue("windowGeometry", windowGeometry);
 	bool maximized = (getMainWindow()->width() == QGuiApplication::primaryScreen()->availableSize().width());
 	independentSettings.setValue("maximized", maximized);
 	independentSettings.setValue("inputDeviceName", getActiveInputName());
