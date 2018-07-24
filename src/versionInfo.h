@@ -25,7 +25,7 @@
 
 // This file includes the version number of this software.
 
-static const QString VERSION_STRING = "0.0.3.1.0.1";
+static const QString VERSION_STRING = "0.0.3.1.0.2";
 static const int SETTINGS_FORMAT_VERSION = 1;
 
 #endif // VERSIONINFO_H
