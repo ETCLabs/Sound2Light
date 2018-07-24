@@ -1,6 +1,14 @@
 
 # Sound2Light Change Log
 
+### Version 0.0.3.1.0.2 - 24 Mar 2018
+
+- Reenabled maximize button
+
+- Make waveform independent from BPM detection
+
+- Replace "BPM Detection" checkbox with "Auto BPM"
+
 ### Version 0.0.3.1.0.1 - 23 Mar 2018
 
 - Added Hog 4 OSC commands (Fader, Cue List, Scene and Macro)
