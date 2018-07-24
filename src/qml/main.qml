@@ -52,7 +52,7 @@ ApplicationWindow {
         text: "Enable BPM Detection"
         shortcut: "Escape"
         onTriggered: {
-            controller.setBPMActive(true)
+            controller.setBPMActive(!controller.getBPMActive())
         }
     }
 

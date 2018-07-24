@@ -59,6 +59,8 @@ public:
 
     int getMinBPM() { return m_minBPM; } // Returns the minium bpm of the range
 
+    void setTransmitBpm(bool value) { m_transmitBpm = value; }
+
     // Helper functions to display a nice GUI
     const QVector<bool>& getOnsets() { return m_onsetBuffer; }
     const Qt3DCore::QCircularBuffer<float>& getWaveDisplay() { return m_spectralFluxBuffer; }
@@ -102,6 +104,7 @@ protected:
     QLinkedList<BeatString>             m_beatStrings; // the IOI Clusters identified from the intervalls
     Qt3DCore::QCircularBuffer<float>    m_lastIntervals; // the last bpm values stored as their interval, to achieve smoothing
     float                               m_lastWinningInterval; // the last outputed bpm as an interval before doubling/halfing
+    bool                                m_transmitBpm;  // true if the BPM should be transmitted via OSC
 
     BPMOscControler*                    m_oscController; // the object respoinsible for handling osc output
 };

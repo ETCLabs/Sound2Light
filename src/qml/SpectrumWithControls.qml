@@ -47,9 +47,7 @@ Row {
         Column {
             id: wavePlot
             width: parent.width
-            height: {
-                return controller.getWaveformVisible() ? 80 : 0
-            }
+            height: controller.waveformVisible ? 80 : 0
 
 
             // -------------------------------- Wave Plot --------------------------------
@@ -64,13 +62,6 @@ Row {
                 width: parent.width
                 height: 5
                 color: "#333333"
-            }
-
-            Connections {
-                target: controller
-                onWaveformVisibleChanged: {
-                       wavePlot.height = controller.getWaveformVisible() ? 80 : 0
-                }
             }
         }
 

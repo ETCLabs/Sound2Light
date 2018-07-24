@@ -82,11 +82,11 @@ void BPMOscControler::transmitBPM(float bpm)
         //Sending "03" is correctly interpreted as "3"
         message.replace("<BPM>", "0" + QString::number(qRound(bpm)));
         message.replace("<BPM1>", "0" + QString::number(qRound(bpm)));
-        message.replace("<BPM1-2>", "0" + QString::number(qRound(bpm*0.5)));
-        message.replace("<BPM1-4>", "0" + QString::number(qRound(bpm*0.25)));
-        message.replace("<BPM1-8>", "0" + QString::number(qRound(bpm*0.125)));
-        message.replace("<BPM1-16>", "0" + QString::number(qRound(bpm*0.0625)));
-        message.replace("<BPM1-32>", "0" + QString::number(qRound(bpm*0.03125)));
+        message.replace("<BPM1-2>", "0" + QString::number(qRound(bpm*0.5f)));
+        message.replace("<BPM1-4>", "0" + QString::number(qRound(bpm*0.25f)));
+        message.replace("<BPM1-8>", "0" + QString::number(qRound(bpm*0.125f)));
+        message.replace("<BPM1-16>", "0" + QString::number(qRound(bpm*0.0625f)));
+        message.replace("<BPM1-32>", "0" + QString::number(qRound(bpm*0.03125f)));
         message.replace("<BPM2>", "0" + QString::number(qRound(bpm*2)));
         message.replace("<BPM4>", "0" + QString::number(qRound(bpm*4)));
         message.replace("<BPM8>", "0" + QString::number(qRound(bpm*8)));

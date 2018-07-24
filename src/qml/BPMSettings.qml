@@ -108,14 +108,18 @@ Item {
             DarkCheckBox {
                 id: bpmActiveCheckbox
                 height: parent.height
-                checked: controller.getBPMActive()
-                onClicked: controller.setBPMActive(checked)
-                text: "BPM Detection"
+                onCheckedChanged: {
+                    if (controller.autoBpm !== checked) {
+                        controller.autoBpm = checked
+                    }
+                }
+                text: "Auto BPM"
+
+                Component.onCompleted: checked = controller.autoBpm
+
                 Connections {
                     target: controller
-                    onBpmActiveChanged: {
-                        bpmActiveCheckbox.checked = controller.getBPMActive()
-                    }
+                    onAutoBpmChanged: bpmActiveCheckbox.checked = controller.autoBpm
                 }
             }
 
@@ -172,16 +176,9 @@ Item {
             width: parent.width - 2*x
             height: 30
             x: 10
-            enabled: bpmActiveCheckbox.checked
-            checked: controller.getWaveformVisible()
-            onClicked: controller.setWaveformVisible(checked)
+            checked: controller.waveformVisible
+            onClicked: controller.waveformVisible = checked
             text: "Waveform"
-            Connections {
-                target: controller
-                onWaveformVisibleChanged: {
-                    waveformVisibleCheckbox.checked = controller.getWaveformVisible()
-                }
-            }
         }
 
         // ------------------------------ Range Picker ---------------------------
@@ -218,7 +215,7 @@ Item {
 
                 function updateFromController() {
                     var minBpm = controller.getMinBPM();
-                    if (minBpm == 0) {
+                    if (minBpm === 0) {
                         rangeComboBox.currentIndex = 0
                     } else if (minBpm < 75) {
                         rangeComboBox.currentIndex = 1

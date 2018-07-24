@@ -79,6 +79,9 @@ class MainController : public QObject
     // this property is used for the lowSoloMode checkbox:
     Q_PROPERTY(bool lowSoloMode READ getLowSoloMode WRITE setLowSoloMode NOTIFY lowSoloModeChanged)
 
+    Q_PROPERTY(bool autoBpm READ getAutoBpm WRITE setAutoBpm NOTIFY autoBpmChanged)
+    Q_PROPERTY(bool waveformVisible READ getWaveformVisible WRITE setWaveformVisible NOTIFY waveformVisibleChanged)
+
 public:
     explicit MainController(QQmlApplicationEngine* m_qmlEngine, QObject* parent = nullptr);
 	~MainController();
@@ -123,6 +126,8 @@ signals:
 
     // emitted if the bpm activation changed
     void bpmActiveChanged();
+
+    void autoBpmChanged();
 
     // emitted if the bpm range changed
     void bpmRangeChanged();
@@ -235,13 +240,16 @@ public slots:
 
     // returns if the bpm detection is currently active
     bool getBPMActive() { return m_bpmActive; }
-    bool getBPMManual() { return m_bpmTap.hasBpm() && !m_bpmActive; }
+    bool getBPMManual() { return m_bpmTap.hasBpm() && !m_autoBpm; }
     // enable or disables bpm detection
     void setBPMActive(bool value);
 
+    bool getAutoBpm() const { return m_autoBpm; }
+    void setAutoBpm(bool value);
+
     // forward calls to BPMDetector
     // returns the current bpm
-    float getBPM() { return getBPMManual() || m_bpm.getBPM() == 0.0 ? m_bpmTap.getBpm() : m_bpm.getBPM(); }
+    float getBPM() { return getBPMManual() || m_bpm.getBPM() == 0.0f ? m_bpmTap.getBpm() : m_bpm.getBPM(); }
     // returns if the detected bpm is old and should be marked as such in the gui
     bool bpmIsOld() { return m_bpm.bpmIsOld(); }
     // sets the minium bpm of the range
@@ -254,8 +262,8 @@ public slots:
     void toggleBPMMute() { m_bpmOSC.toggleBPMMute(); emit bpmMuteChanged(); }
 
     // set/get the waveform visibility
-    bool getWaveformVisible() { return m_waveformVisible & m_bpmActive; }
-    void setWaveformVisible(bool value) { m_waveformVisible = value; emit waveformVisibleChanged();}
+    bool getWaveformVisible() { return m_waveformVisible; }
+    void setWaveformVisible(bool value);
 
     // returns the last seconds of waveform as a list of qreal values in the range 0...1
     // as well as the marks where a peak was detected as a boolean value and colors that represent the spectrum
@@ -389,6 +397,7 @@ protected:
     bool                        m_bpmActive; // true if the bpm detection is active
     QTimer                      m_bpmUpdatetimer; // Timer to trigger bpm update
     bool                        m_waveformVisible; // true if the waveform is visible
+    bool                        m_autoBpm; // true if BPM should be set automatically
 
 	TriggerGenerator* m_bass;  // pointer to Bass TriggerGenerator instance
 	TriggerGenerator* m_loMid;  // pointer to LoMid TriggerGenerator instance

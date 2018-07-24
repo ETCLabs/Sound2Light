@@ -29,7 +29,7 @@
 // LENGTH_EXPONENT is the number of samples used expressed as an exponent of two
 
 template<int LENGTH_EXPONENT>
-class FFTRealWrapper : BasicFFTInterface
+class FFTRealWrapper : public BasicFFTInterface
 {
 
 public:

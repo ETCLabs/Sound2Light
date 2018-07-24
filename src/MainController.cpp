@@ -51,6 +51,7 @@ MainController::MainController(QQmlApplicationEngine* qmlEngine, QObject *parent
     , m_bpmTap(&m_bpmOSC)
     , m_bpmActive(false)
     , m_waveformVisible(true)
+    , m_autoBpm(false)
 {
 	m_audioInput = new QAudioInputWrapper(&m_buffer);
 
@@ -223,17 +224,13 @@ void MainController::initAudioInput()
 
 void MainController::triggerBeat()
 {
-    if (m_bpmActive) {
-        setBPMActive(false);
-    }
+    setAutoBpm(false);
     m_bpmTap.triggerBeat();
 }
 
 void MainController::setBPM(float value)
 {
-    if (m_bpmActive) {
-        setBPMActive(false);
-    }
+    setAutoBpm(false);
     m_bpmTap.setBpm(value);
 }
 
@@ -310,6 +307,7 @@ void MainController::setOscEnabled(bool value) {
 
 // enable or disables bpm detection
 void MainController::setBPMActive(bool value) {
+    if (value == m_bpmActive) return;
     m_bpmActive = value;
     if (m_bpmActive) {
         activateBPM();
@@ -321,6 +319,19 @@ void MainController::setBPMActive(bool value) {
     m_osc.sendMessage("/s2l/out/bpm/enabled", (value ? "1" : "0"), true);
 }
 
+void MainController::setAutoBpm(bool value) {
+    if (value == m_autoBpm) return;
+    m_autoBpm = value;
+    qDebug() << m_autoBpm;
+    m_bpm.setTransmitBpm(m_autoBpm);
+    if (m_autoBpm && !m_bpmActive) {
+        setBPMActive(true);
+    } else if (!m_autoBpm && !m_waveformVisible && m_bpmActive) {
+        setBPMActive(false);
+    }
+    emit autoBpmChanged();
+}
+
 // sets the minium bpm of the range
 void MainController::setMinBPM(int value) {
     m_bpm.setMinBPM(value);
@@ -329,10 +340,20 @@ void MainController::setMinBPM(int value) {
     m_osc.sendMessage("/s2l/out/bpm/range", QString::number(value), true);
 }
 
+void MainController::setWaveformVisible(bool value) {
+    m_waveformVisible = value;
+    if (m_waveformVisible && !m_bpmActive) {
+        setBPMActive(true);
+    } else if (!m_autoBpm && !m_waveformVisible && m_bpmActive) {
+        setBPMActive(false);
+    }
+    emit waveformVisibleChanged();
+}
+
 void MainController::onExit()
 {
-	savePresetIndependentSettings();
-	autosave();
+    savePresetIndependentSettings();
+    autosave();
 }
 
 void MainController::onVisibilityChanged()
@@ -464,6 +485,7 @@ void MainController::loadPreset(const QString &constFileName, bool createIfNotEx
 	setConsoleType(settings.value("consoleType").toString());
     setLowSoloMode(settings.value("lowSoloMode").toBool());
     setBPMActive(settings.value("bpm/Active", false).toBool());
+    setAutoBpm(settings.value("autoBpm", false).toBool());
     setWaveformVisible(settings.value("waveformVisible", true).toBool());
 
 	// restore the settings in all TriggerGenerators:
@@ -550,6 +572,7 @@ void MainController::savePresetAs(const QString &constFileName, bool isAutosave)
 	settings.setValue("consoleType", getConsoleType());
     settings.setValue("lowSoloMode", getLowSoloMode());
     settings.setValue("bpm/Active", getBPMActive());
+    settings.setValue("autoBpm", getAutoBpm());
     settings.setValue("waveformVisible", m_waveformVisible); // store property because getter is for GUI, and only returns true if bpm is active
 
 	// save the settings in all TriggerGenerators:

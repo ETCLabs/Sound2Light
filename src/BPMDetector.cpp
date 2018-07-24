@@ -242,9 +242,10 @@ BPMDetector::BPMDetector(const MonoAudioBuffer &buffer, BPMOscControler *osc) :
   , m_lastSpectrum(NUM_BPM_FFT_SAMPLES)
   , m_beatStrings()
   , m_lastIntervals(INTERVALS_TO_STORE)
+  , m_transmitBpm(false)
   , m_oscController(osc)
 {
-    m_fft = (BasicFFTInterface*) new FFTRealWrapper<NUM_BPM_FFT_SAMPLES_EXPONENT>();
+    m_fft = static_cast<BasicFFTInterface*>(new FFTRealWrapper<NUM_BPM_FFT_SAMPLES_EXPONENT>());
     calculateWindow();
 }
 
@@ -755,7 +756,7 @@ void BPMDetector::evaluateStrings()
         QLinkedList<IntervalCluster> finalIntervalClusters;
         for (float& interval : m_lastIntervals) {
             // Identify the cluster that most closely matches the interval (up to CLUSTER_WIDTH deviation is allowd)
-            IntervalCluster* closestCluster = 0;
+            IntervalCluster* closestCluster = nullptr;
             int closestDistance = INT_MAX;
             for (IntervalCluster& cluster : finalIntervalClusters) {
                 int distance = qAbs(cluster.getAverageInterval() - interval);
@@ -774,7 +775,7 @@ void BPMDetector::evaluateStrings()
         }
 
         // Identify the winning cluster of tempos
-        IntervalCluster* maxFinalCluster = 0;
+        IntervalCluster* maxFinalCluster = nullptr;
         for (IntervalCluster& cluster : finalIntervalClusters) {
             if (!maxFinalCluster || cluster.getScore() > maxFinalCluster->getScore()) {
                 maxFinalCluster = &cluster;
@@ -786,7 +787,7 @@ void BPMDetector::evaluateStrings()
             m_lastWinningInterval = maxFinalCluster->getAverageInterval();
             float newBPM = bpmInRange(msToBPM(maxFinalCluster->getAverageInterval()), m_minBPM);
             m_bpm = newBPM;
-            m_oscController->transmitBPM(m_bpm);
+            if (m_transmitBpm) m_oscController->transmitBPM(m_bpm);
             m_framesSinceLastBPMDetection = 0;
             return;
         }
