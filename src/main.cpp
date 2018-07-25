@@ -30,7 +30,11 @@
 
 
 int main(int argc, char *argv[]) {
-	QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#ifdef Q_OS_MAC
+    qputenv("QT_SCREEN_SCALE_FACTORS", QString::number(0.5, 'f', 2).toUtf8());
+#endif
+
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 	app.setWindowIcon(QIcon(":/images/icons/etcicon.ico"));
 
