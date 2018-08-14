@@ -72,10 +72,10 @@ Dialog {
 				width: parent.width
 				height: 35
 				text: "Preset List"
-				onClicked: {
-					controller.openDialog("qrc:/qml/PresetListDialog.qml")
+                onClicked: {
 					root.close()
-					controller.dialogIsClosed(root)
+                    controller.dialogIsClosed(root)
+                    controller.openDialog("qrc:/qml/PresetListDialog.qml")
 				}
 			}
 			DarkButton {
