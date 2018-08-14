@@ -101,7 +101,7 @@ Item {
 				// Console Label in the top right corner
 				text: "Hog 4"
 				anchors.right: parent.right
-				font.pointSize: 12
+                font.pointSize: 12
 				font.bold: true
 			}
 		}  // Row end
@@ -177,10 +177,9 @@ Item {
 					id: faderOnValue
 					height: parent.height
 					width: parent.width * 0.5
-					value: 100
+                    value: 255
 					minimumValue: 0
-					maximumValue: 100
-					suffix: " %"
+                    maximumValue: 255
 				}
 			}
 			Row {
@@ -198,8 +197,7 @@ Item {
 					width: parent.width * 0.5
 					value: 0
 					minimumValue: 0
-					maximumValue: 100
-					suffix: " %"
+                    maximumValue: 255
 				}
 			}
 
@@ -211,7 +209,7 @@ Item {
 				} else {
 					faderMode.currentIndex = faderMode.model.indexOf("Switch")
 					cueListNumber.value = Utils.lastPartAsInt(triggerController.getOnMessage(), 1)
-					faderOnValue.value = Utils.argumentAsFloat(triggerController.getOnMessage(), 100)
+                    faderOnValue.value = Utils.argumentAsFloat(triggerController.getOnMessage(), 255)
 					faderOffValue.value = Utils.argumentAsFloat(triggerController.getOffMessage(), 0)
 				}
 			}
@@ -219,14 +217,14 @@ Item {
 
 			function getMessages() {
 				var level = faderMode.currentText === "Level";
-				var messages = {
-					"on": level ? "" : "/hog/hardware/fader/" + cueListNumber.value + "=" + faderOnValue.value,
-								  "off": level ? "" : "/hog/hardware/fader/" + cueListNumber.value + "=" + faderOffValue.value,
-												 "level": level ? "/hog/hardware/fader/" + cueListNumber.value + "=" : "",
-																  "levelMin": 0,
-																  "levelMax": 100,
-																  "shortText": "Fader " + cueListNumber.value
-				}
+                var messages = {
+                    "on": level ? "" : "/hog/hardware/fader/" + cueListNumber.value + "=" + faderOnValue.value,
+                    "off": level ? "" : "/hog/hardware/fader/" + cueListNumber.value + "=" + faderOffValue.value,
+                    "level": level ? "/hog/hardware/fader/" + cueListNumber.value + "=" : "",
+                    "levelMin": 0,
+                    "levelMax": 255,
+                    "shortText": "Fader " + cueListNumber.value
+                }
 				return messages
 			}
 		}
@@ -280,10 +278,10 @@ Item {
 				var messages = {
 					"on": "/hog/playback/go=0," + cueListNumber.value,
 					"off": releaseOnOffCheckbox.checked ? "/hog/playback/release=0," + cueListNumber.value : "",
-														  "level": "",
-														  "levelMin": 0,
-														  "levelMax": 1,
-														  "shortText": "Cue List " + cueListNumber.value
+                    "level": "",
+                    "levelMin": 0,
+                    "levelMax": 1,
+                    "shortText": "Cue List " + cueListNumber.value
 				}
 				return messages
 			}
@@ -338,10 +336,10 @@ Item {
 				var messages = {
 					"on": "/hog/playback/go=1," + sceneNumber.value,
 					"off": releaseOnOffSceneCheckbox.checked ? "/hog/playback/release=1," + sceneNumber.value : "",
-															   "level": "",
-															   "levelMin": 0,
-															   "levelMax": 1,
-															   "shortText": "Scene " + sceneNumber.value
+                    "level": "",
+                    "levelMin": 0,
+                    "levelMax": 1,
+                    "shortText": "Scene " + sceneNumber.value
 				}
 				return messages
 			}
@@ -396,10 +394,10 @@ Item {
 				var messages = {
 					"on": "/hog/playback/go=2," + macroNumber.value,
 					"off": releaseOnOffMacroCheckbox.checked ? "/hog/playback/release=2," + macroNumber.value : "",
-															   "level": "",
-															   "levelMin": 0,
-															   "levelMax": 1,
-															   "shortText": "Macro " + macroNumber.value
+                    "level": "",
+                    "levelMin": 0,
+                    "levelMax": 1,
+                    "shortText": "Macro " + macroNumber.value
 				}
 				return messages
 			}
@@ -470,7 +468,7 @@ Item {
 					width: parent.width * 0.5
 					value: triggerController.getMinLevelValue()
 					minimumValue: 0
-					maximumValue: 100
+                    maximumValue: 255
 					decimals: 2
 				}
 			}
@@ -488,7 +486,7 @@ Item {
 					width: parent.width * 0.5
 					value: triggerController.getMaxLevelValue()
 					minimumValue: 0
-					maximumValue: 100
+                    maximumValue: 255
 					decimals: 2
 				}
 			}
