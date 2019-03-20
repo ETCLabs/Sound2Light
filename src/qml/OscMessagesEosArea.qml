@@ -268,8 +268,9 @@ Item {
 					height: parent.height
 					width: parent.width * 0.5
 					value: 1
-					minimumValue: 1
-					maximumValue: 999
+                    minimumValue: 0.001
+                    maximumValue: 9999.999
+                    decimals: 3
 				}
 			}
 			Row {
